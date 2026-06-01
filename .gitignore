@@ -1,0 +1,32 @@
+# Python (uv creates .venv by default)
+.venv/
+venv/
+# uv cache is global; no project entry needed
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment & secrets
+.env
+.env.local
+
+# Data & experiment outputs (large / local)
+data/bird/**/*
+!data/bird/mini_dev/.gitkeep
+!data/bird/full_dev/.gitkeep
+runs/*
+!runs/.gitkeep
+!runs/batches/
+runs/batches/*
+!runs/batches/.gitkeep
+wandb/
+mlruns/
+
+# OS & editors
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json

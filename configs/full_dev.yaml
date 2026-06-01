@@ -1,0 +1,37 @@
+# Full BIRD dev split - use after mini-dev harness works.
+
+project:
+  name: bird-agent-coordination
+  seed: 42
+
+bird:
+  split: full_dev
+  root: data/bird/full_dev
+  tasks_json: data/bird/full_dev/dev.json
+  databases_dir: data/bird/full_dev/dev_databases
+  subset_file: ""
+  subset_limit: 0
+
+use_evidence: true
+
+llm:
+  models_config: configs/models.yaml
+  default: gpt-4o-mini
+  eval_models:
+    - gpt-4o-mini
+    - gemini-2.0-flash
+    - deepseek-v3.2
+  temperature: 0
+  max_turns: 15
+  budget_usd: 500
+
+database:
+  engine: duckdb
+  query_timeout_seconds: 30
+  read_only: true
+  max_result_rows: 100
+
+logging:
+  runs_dir: runs
+  log_llm_messages: false
+  experiment_tracker: none

@@ -1,0 +1,7 @@
+# Deprecated: dependencies live in pyproject.toml. Regenerate a lockfile with:
+#   uv lock
+# Install with:
+#   uv sync --all-groups
+#
+# To export a pip-compatible file (optional):
+#   uv export --no-hashes -o requirements.lock.txt

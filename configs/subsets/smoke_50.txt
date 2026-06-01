@@ -1,0 +1,4 @@
+# One question_id per line (from mini_dev_sqlite.json).
+# Generate after download:
+#   uv run python scripts/list_question_ids.py --limit 50 > configs/subsets/smoke_50.txt
+# Then set bird.subset_file in configs/default.yaml to: configs/subsets/smoke_50.txt
