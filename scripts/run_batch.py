@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import time
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -15,8 +16,16 @@ sys.path.insert(0, str(REPO_ROOT))
 from dotenv import load_dotenv
 
 from src.agent.loop import run_agent
-from src.batch.summary import BatchRow, BatchSummary, print_batch_summary, write_batch_csv, write_batch_json
+from src.batch.summary import (
+    BatchRow,
+    BatchSummary,
+    failed_question_ids_from_batch,
+    print_batch_summary,
+    write_batch_csv,
+    write_batch_json,
+)
 from src.bird.subset import resolve_task_subset
+from src.bird.tasks import get_task
 from src.config import load_config, validate_paths
 from src.llm.client import api_key_status
 from src.llm.models import load_model_registry
@@ -54,6 +63,19 @@ def main() -> int:
         action="store_true",
         help="Stop batch on first task exception (default: continue)",
     )
+    parser.add_argument(
+        "--retry-from",
+        type=Path,
+        default=None,
+        metavar="BATCH.json",
+        help="Re-run only tasks that failed with API errors in a prior batch JSON",
+    )
+    parser.add_argument(
+        "--inter-task-delay",
+        type=float,
+        default=None,
+        help="Seconds to sleep between tasks (default: llm.batch_inter_task_delay_seconds)",
+    )
     args = parser.parse_args()
 
     load_dotenv(REPO_ROOT / ".env")
@@ -68,15 +90,45 @@ def main() -> int:
 
     registry = load_model_registry(cfg.models_config_path)
     spec = registry.get(model_key)
+    # Use the resolved key (aliases -> canonical) for filenames and result rows.
+    model_key = spec.key
     ok, msg = api_key_status(spec)
     if not ok and not args.dry_run:
         print(f"API key missing for {model_key}: {msg}", file=sys.stderr)
         return 1
 
-    tasks = resolve_task_subset(cfg, limit=args.limit, subset_file=args.subset_file)
+    if args.retry_from:
+        if not args.retry_from.is_file():
+            print(f"Batch file not found: {args.retry_from}", file=sys.stderr)
+            return 1
+        qids = failed_question_ids_from_batch(args.retry_from)
+        if not qids:
+            print("No failed API tasks to retry in batch file.", file=sys.stderr)
+            return 1
+        tasks = []
+        for qid in qids:
+            try:
+                tasks.append(get_task(qid, cfg))
+            except KeyError:
+                print(
+                    f"  skipping question_id={qid}: not in current task set",
+                    file=sys.stderr,
+                )
+        if not tasks:
+            print("No retryable tasks found in current task set.", file=sys.stderr)
+            return 1
+        print(f"Retrying {len(tasks)} failed task(s) from {args.retry_from.name}")
+    else:
+        tasks = resolve_task_subset(cfg, limit=args.limit, subset_file=args.subset_file)
     if not tasks:
         print("No tasks selected.", file=sys.stderr)
         return 1
+
+    inter_task_delay = (
+        args.inter_task_delay
+        if args.inter_task_delay is not None
+        else cfg.batch_inter_task_delay_seconds
+    )
 
     batch_id = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:6]
     out_dir = args.output_dir or (cfg.runs_dir / "batches")
@@ -103,6 +155,8 @@ def main() -> int:
 
     failures = 0
     for i, task in enumerate(tasks):
+        if i > 0 and inter_task_delay > 0:
+            time.sleep(inter_task_delay)
         print(f"\n[{i + 1}/{len(tasks)}] question_id={task.question_id} ({task.difficulty}) ...", flush=True)
         try:
             result = run_agent(task, model_key, cfg)

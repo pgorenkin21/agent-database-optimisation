@@ -37,6 +37,20 @@ def test_build_schema_context() -> None:
     assert task.db_id in text or "customers" in text.lower()
 
 
+def test_gemini_function_declarations_use_schema_parameters() -> None:
+    """google-genai FunctionDeclaration rejects parameters_json_schema dicts."""
+    from google.genai import types
+
+    from src.llm.chat import build_gemini_function_declarations
+
+    decls = build_gemini_function_declarations(types)
+    assert len(decls) == 2
+    assert decls[0].name == "execute_sql"
+    assert decls[0].parameters is not None
+    assert decls[0].parameters.type == types.Type.OBJECT
+    assert "sql" in (decls[0].parameters.properties or {})
+
+
 def test_student_club_budget_csv_encoding() -> None:
     """student_club/Budget.csv uses cp1252; must not raise on schema load."""
     cfg = load_config()

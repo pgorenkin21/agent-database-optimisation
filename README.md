@@ -30,17 +30,17 @@ Configured in [`configs/models.yaml`](configs/models.yaml) and referenced from [
 | Registry key | Provider | API model ID | Env var |
 |--------------|----------|--------------|---------|
 | `gpt-4o-mini` | OpenAI | `gpt-4o-mini` | `OPENAI_API_KEY` |
-| `gemini-2.0-flash` | Google | `gemini-2.0-flash` | `GEMINI_API_KEY` or `GOOGLE_API_KEY` |
+| `gemini-2.5-flash` | Google | `gemini-2.5-flash` | `GEMINI_API_KEY` or `GOOGLE_API_KEY` |
 | `deepseek-v3.2` | DeepSeek | `deepseek-chat` (V3.2) | `DEEPSEEK_API_KEY` |
 
 - **Default agent:** `llm.default` (currently `gpt-4o-mini`)
 - **Thesis eval matrix:** `llm.eval_models` lists all three
 
-Change the default for a single run (Phase 1+): set `llm.default` or pass `--model gemini-2.0-flash` (when implemented).
+Change the default for a single run (Phase 1+): set `llm.default` or pass `--model gemini-2.5-flash`.
 
 DeepSeek uses the [OpenAI-compatible API](https://api-docs.deepseek.com/) at `https://api.deepseek.com`.
 
-If `gemini-2.0-flash` is unavailable in your region, edit `api_model` in `configs/models.yaml` (e.g. `gemini-2.5-flash`).
+If `gemini-2.5-flash` is unavailable in your region, edit `api_model` in `configs/models.yaml`.
 
 ### Download BIRD mini-dev (default)
 
@@ -139,11 +139,11 @@ Tool-calling agent: `execute_sql` (explore) and `submit_sql` (final answer). Tra
 ```bash
 uv run python scripts/run_one_agent.py --question-id 1471 --model gpt-4o-mini
 uv run python scripts/run_one_agent.py --index 0 --model deepseek-v3.2
-uv run python scripts/run_one_agent.py --question-id 1471 --model gemini-2.0-flash
+uv run python scripts/run_one_agent.py --question-id 1471 --model gemini-2.5-flash
 uv run python scripts/inspect_trace.py runs/<run_id>.jsonl
 ```
 
-Models: registry keys from `configs/models.yaml` (`gpt-4o-mini`, `gemini-2.0-flash`, `deepseek-v3.2`).
+Models: registry keys from `configs/models.yaml` (`gpt-4o-mini`, `gemini-2.5-flash`, `deepseek-v3.2`).
 
 ### Batch runs
 

@@ -9,6 +9,7 @@ from typing import Any
 from src.agent.tools import TOOL_DEFINITIONS_OPENAI
 from src.llm.client import create_chat_client
 from src.llm.models import ModelSpec
+from src.llm.retry import RetryConfig, call_with_retry
 
 
 @dataclass
@@ -36,12 +37,27 @@ def _parse_json_args(raw: str | None) -> dict[str, Any]:
         return {}
 
 
+def _log_api_retry(attempt: int, exc: BaseException, wait: float) -> None:
+    print(
+        f"  LLM retry {attempt} in {wait:.1f}s ({type(exc).__name__}: {exc})",
+        flush=True,
+    )
+
+
 class OpenAIChatBackend:
-    def __init__(self, spec: ModelSpec) -> None:
+    def __init__(self, spec: ModelSpec, *, retry: RetryConfig | None = None) -> None:
         self.spec = spec
         self.client = create_chat_client(spec)
+        self._retry = retry or RetryConfig(max_attempts=1)
 
     def complete(self, messages: list[dict[str, Any]]) -> ChatResponse:
+        return call_with_retry(
+            lambda: self._complete_once(messages),
+            self._retry,
+            on_retry=_log_api_retry,
+        )
+
+    def _complete_once(self, messages: list[dict[str, Any]]) -> ChatResponse:
         response = self.client.chat.completions.create(
             model=self.spec.api_model,
             messages=messages,
@@ -88,34 +104,53 @@ class OpenAIChatBackend:
         )
 
 
+def _gemini_sql_parameters_schema(types: Any) -> Any:
+    """Object schema { sql: string } for Gemini FunctionDeclaration.parameters."""
+    return types.Schema(
+        type=types.Type.OBJECT,
+        properties={
+            "sql": types.Schema(
+                type=types.Type.STRING,
+                description="SQLite SELECT query.",
+            ),
+        },
+        required=["sql"],
+    )
+
+
+def build_gemini_function_declarations(types: Any) -> list[Any]:
+    """Tool declarations for google-genai (uses Schema, not JSON-schema dict)."""
+    sql_params = _gemini_sql_parameters_schema(types)
+    return [
+        types.FunctionDeclaration(
+            name="execute_sql",
+            description=(
+                "Execute a read-only SQL query (SELECT or WITH) on the task database. "
+                "Use for exploration; results are returned as text."
+            ),
+            parameters=sql_params,
+        ),
+        types.FunctionDeclaration(
+            name="submit_sql",
+            description=(
+                "Submit the final SQL query that answers the user's question. "
+                "Call this when you are confident in the answer."
+            ),
+            parameters=sql_params,
+        ),
+    ]
+
+
 class GeminiChatBackend:
-    def __init__(self, spec: ModelSpec) -> None:
+    def __init__(self, spec: ModelSpec, *, retry: RetryConfig | None = None) -> None:
         self.spec = spec
         self.client = create_chat_client(spec)
         from google.genai import types
 
         self._types = types
-        self._declarations = [
-            types.FunctionDeclaration(
-                name="execute_sql",
-                description="Execute a read-only SQLite SELECT for exploration.",
-                parameters_json_schema={
-                    "type": "object",
-                    "properties": {"sql": {"type": "string"}},
-                    "required": ["sql"],
-                },
-            ),
-            types.FunctionDeclaration(
-                name="submit_sql",
-                description="Submit the final SELECT that answers the question.",
-                parameters_json_schema={
-                    "type": "object",
-                    "properties": {"sql": {"type": "string"}},
-                    "required": ["sql"],
-                },
-            ),
-        ]
+        self._declarations = build_gemini_function_declarations(types)
         self._tools = [types.Tool(function_declarations=self._declarations)]
+        self._retry = retry or RetryConfig(max_attempts=1)
 
     def _to_contents(self, messages: list[dict[str, Any]]) -> list[Any]:
         types = self._types
@@ -166,6 +201,13 @@ class GeminiChatBackend:
         return contents
 
     def complete(self, messages: list[dict[str, Any]]) -> ChatResponse:
+        return call_with_retry(
+            lambda: self._complete_once(messages),
+            self._retry,
+            on_retry=_log_api_retry,
+        )
+
+    def _complete_once(self, messages: list[dict[str, Any]]) -> ChatResponse:
         types = self._types
         contents = self._to_contents(messages)
         response = self.client.models.generate_content(
@@ -224,9 +266,13 @@ class GeminiChatBackend:
         )
 
 
-def create_chat_backend(spec: ModelSpec) -> OpenAIChatBackend | GeminiChatBackend:
+def create_chat_backend(
+    spec: ModelSpec,
+    *,
+    retry: RetryConfig | None = None,
+) -> OpenAIChatBackend | GeminiChatBackend:
     if spec.provider == "google":
-        return GeminiChatBackend(spec)
+        return GeminiChatBackend(spec, retry=retry)
     if spec.is_openai_compatible():
-        return OpenAIChatBackend(spec)
+        return OpenAIChatBackend(spec, retry=retry)
     raise ValueError(f"Unsupported provider: {spec.provider}")

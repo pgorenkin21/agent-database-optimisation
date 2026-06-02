@@ -26,15 +26,24 @@ class ModelSpec:
         return self.provider in ("openai", "deepseek")
 
 
+# Deprecated registry keys -> current key (same ModelSpec instance).
+_MODEL_ALIASES: dict[str, str] = {
+    "gemini-2.0-flash": "gemini-2.5-flash",
+}
+
+
 @dataclass(frozen=True)
 class ModelRegistry:
     models: dict[str, ModelSpec]
 
     def get(self, key: str) -> ModelSpec:
-        if key not in self.models:
+        resolved = _MODEL_ALIASES.get(key, key)
+        if resolved not in self.models:
             known = ", ".join(sorted(self.models))
-            raise KeyError(f"Unknown model key {key!r}. Known: {known}")
-        return self.models[key]
+            aliases = ", ".join(f"{a}->{b}" for a, b in sorted(_MODEL_ALIASES.items()))
+            hint = f" Aliases: {aliases}." if _MODEL_ALIASES else ""
+            raise KeyError(f"Unknown model key {key!r}. Known: {known}.{hint}")
+        return self.models[resolved]
 
     def keys(self) -> list[str]:
         return list(self.models.keys())

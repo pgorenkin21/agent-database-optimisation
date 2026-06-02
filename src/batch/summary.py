@@ -123,6 +123,30 @@ def write_batch_json(path: Path, summary: BatchSummary) -> None:
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
 
+def load_batch_json(path: Path) -> dict:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict) or "rows" not in data:
+        raise ValueError(f"Invalid batch JSON: {path}")
+    return data
+
+
+def failed_question_ids_from_batch(path: Path) -> list[int]:
+    """Question IDs of tasks that raised an exception in a prior batch (for --retry-from).
+
+    run_batch records ``stop_reason="error"`` only when a task raises (API/transport
+    errors, timeouts); the agent loop handles SQL errors internally as turns. So an
+    error row is exactly a task worth re-running.
+    """
+    data = load_batch_json(path)
+    ids: list[int] = []
+    for row in data["rows"]:
+        if not isinstance(row, dict):
+            continue
+        if str(row.get("stop_reason", "")) == "error":
+            ids.append(int(row["question_id"]))
+    return ids
+
+
 def print_batch_summary(summary: BatchSummary) -> None:
     print()
     print(f"Batch {summary.batch_id} ({summary.model_key})")

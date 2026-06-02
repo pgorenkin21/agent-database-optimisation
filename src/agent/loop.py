@@ -68,7 +68,7 @@ def run_agent(
             agent_id="agent_0",
         )
 
-    backend = create_chat_backend(spec)
+    backend = create_chat_backend(spec, retry=cfg.llm_retry_config())
     timeout = float(cfg.query_timeout_seconds)
     max_sample_rows = 10
 

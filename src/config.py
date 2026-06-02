@@ -95,6 +95,31 @@ class ProjectConfig:
         return float(self.raw["llm"]["budget_usd"])
 
     @property
+    def llm_retry_max_attempts(self) -> int:
+        return int(self.raw["llm"].get("retry_max_attempts", 6))
+
+    @property
+    def llm_retry_base_delay_seconds(self) -> float:
+        return float(self.raw["llm"].get("retry_base_delay_seconds", 2.0))
+
+    @property
+    def llm_retry_max_delay_seconds(self) -> float:
+        return float(self.raw["llm"].get("retry_max_delay_seconds", 60.0))
+
+    @property
+    def batch_inter_task_delay_seconds(self) -> float:
+        return float(self.raw["llm"].get("batch_inter_task_delay_seconds", 0.0))
+
+    def llm_retry_config(self) -> "RetryConfig":
+        from src.llm.retry import RetryConfig
+
+        return RetryConfig(
+            max_attempts=self.llm_retry_max_attempts,
+            base_delay_seconds=self.llm_retry_base_delay_seconds,
+            max_delay_seconds=self.llm_retry_max_delay_seconds,
+        )
+
+    @property
     def runs_dir(self) -> Path:
         return self.repo_root / self.raw["logging"]["runs_dir"]
 

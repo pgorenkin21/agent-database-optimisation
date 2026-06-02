@@ -11,7 +11,13 @@ from src.llm.models import load_model_registry
 
 def test_registry_has_three_eval_models() -> None:
     reg = load_model_registry()
-    assert set(reg.keys()) >= {"gpt-4o-mini", "gemini-2.0-flash", "deepseek-v3.2"}
+    assert set(reg.keys()) >= {"gpt-4o-mini", "gemini-2.5-flash", "deepseek-v3.2"}
+
+
+def test_gemini_alias_resolves_to_25_flash() -> None:
+    spec = load_model_registry().get("gemini-2.0-flash")
+    assert spec.key == "gemini-2.5-flash"
+    assert spec.api_model == "gemini-2.5-flash"
 
 
 def test_deepseek_maps_to_chat_api_model() -> None:
@@ -26,7 +32,7 @@ def test_default_config_eval_models() -> None:
     assert cfg.default_model_key == "gpt-4o-mini"
     assert cfg.eval_model_keys == [
         "gpt-4o-mini",
-        "gemini-2.0-flash",
+        "gemini-2.5-flash",
         "deepseek-v3.2",
     ]
 
@@ -40,4 +46,4 @@ def test_api_key_status_missing(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_full_dev_config_uses_same_models() -> None:
     cfg = load_config(Path("configs/full_dev.yaml"))
-    assert "gemini-2.0-flash" in cfg.eval_model_keys
+    assert "gemini-2.5-flash" in cfg.eval_model_keys

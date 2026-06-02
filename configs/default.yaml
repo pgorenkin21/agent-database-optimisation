@@ -20,11 +20,16 @@ llm:
   # Thesis evaluation matrix (plan: 2+ LLMs); all three for redundancy / cost experiments
   eval_models:
     - gpt-4o-mini
-    - gemini-2.0-flash
+    - gemini-2.5-flash
     - deepseek-v3.2
   temperature: 0
   max_turns: 15
   budget_usd: 500
+  # Back off on 503/429 (Gemini spikes); batch pause reduces burst rate limits
+  retry_max_attempts: 6
+  retry_base_delay_seconds: 2
+  retry_max_delay_seconds: 60
+  batch_inter_task_delay_seconds: 1.5
 
 database:
   engine: duckdb

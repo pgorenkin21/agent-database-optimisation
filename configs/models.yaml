@@ -1,8 +1,6 @@
 # Model registry for experiments. Keys are used in configs/default.yaml (llm.default, llm.eval_models).
 #
 # DeepSeek: V3.2 is served as deepseek-chat on the official API (OpenAI-compatible).
-# Gemini: gemini-2.0-flash may be deprecated on Google AI; set api_model to a newer Flash if calls fail.
-
 models:
   gpt-4o-mini:
     label: GPT-4o mini
@@ -10,8 +8,8 @@ models:
     api_model: gpt-4o-mini
     api_key_env: OPENAI_API_KEY
 
-  gemini-2.0-flash:
-    label: Gemini 2.5 Flash (registry key kept; 2.0-flash retired on API)
+  gemini-2.5-flash:
+    label: Gemini 2.5 Flash
     provider: google
     api_model: gemini-2.5-flash
     api_key_env: GEMINI_API_KEY
