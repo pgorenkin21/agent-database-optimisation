@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 *)",
+      "Bash(xargs ls -la)",
+      "Bash(uv run *)",
+      "Bash(uv add *)"
+    ]
+  }
+}
