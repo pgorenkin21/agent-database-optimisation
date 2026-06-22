@@ -42,12 +42,30 @@ def validate_read_only_sql(sql: str) -> None:
             raise ValueError(f"Forbidden statement type in SQL: {token.strip()}")
 
 
+_MISSING_TABLE_RE = re.compile(r"no such table:?\s*([^\s\"]+)", re.IGNORECASE)
+
+
+def is_sqlite_missing_table_error(error: str | None) -> bool:
+    """True when SQLite reports a missing table (pruned schema may be incomplete)."""
+    if not error:
+        return False
+    return bool(_MISSING_TABLE_RE.search(error))
+
+
 def format_sql_feedback(
     rows: list[tuple] | None,
     error: str | None,
     *,
     max_rows: int = 10,
+    cache_hit: bool = False,
 ) -> str:
+    if cache_hit and not error:
+        count = len(rows) if rows is not None else 0
+        return (
+            f"Success (cache hit): {count} row(s). "
+            "Result identical to a prior explore query on this task; "
+            "see shared semantic facts if listed above."
+        )
     if error:
         return f"SQL error: {error}"
     if rows is None:

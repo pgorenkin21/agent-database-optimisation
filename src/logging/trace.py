@@ -11,7 +11,9 @@ from pathlib import Path
 from typing import Any, Iterator
 
 from src.config import ProjectConfig
+from src.db.shared_sql_cache import SharedSqlResultCache
 from src.db.sqlite_exec import SqlExecutionError, execute_sql
+from src.db.sql_normalize import cache_key_for_sql, normalize_sql_ast
 
 
 def _utc_now_iso() -> str:
@@ -49,8 +51,12 @@ class RunTrace:
     policy: str = "P0"
     model: str | None = None
     agent_id: str | None = None
+    temperature: float | None = None
+    start_delay_seconds: float = 0.0
+    start_turn_delay: int = 0
     runs_dir: Path | None = None
     run_id: str = field(default_factory=lambda: uuid.uuid4().hex[:12])
+    sql_cache: SharedSqlResultCache | None = None
     _seq: int = field(default=0, init=False, repr=False)
     _path: Path | None = field(default=None, init=False, repr=False)
     _started_at: float = field(default_factory=time.perf_counter, init=False, repr=False)
@@ -69,6 +75,9 @@ class RunTrace:
                 "policy": self.policy,
                 "model": self.model,
                 "agent_id": self.agent_id,
+                "temperature": self.temperature,
+                "start_delay_seconds": self.start_delay_seconds,
+                "start_turn_delay": self.start_turn_delay,
                 "seed": self.cfg.seed,
                 "bird_split": self.cfg.bird_split,
             }
@@ -93,8 +102,8 @@ class RunTrace:
         db_path: Path,
         timeout_seconds: float | None = None,
         turn_idx: int = 0,
-    ) -> tuple[list[tuple[Any, ...]] | None, SqlExecutionError | None]:
-        """Execute SQL, append sql_execute event, return rows or error."""
+    ) -> tuple[list[tuple[Any, ...]] | None, SqlExecutionError | None, bool]:
+        """Execute SQL, append sql_execute event, return (rows, error, cache_hit)."""
         timeout = (
             float(timeout_seconds)
             if timeout_seconds is not None
@@ -107,32 +116,50 @@ class RunTrace:
         error: SqlExecutionError | None = None
         rows: list[tuple[Any, ...]] | None = None
         status = "ok"
+        cache_hit = False
+        cache_key_ast: str | None = None
 
-        try:
-            rows = execute_sql(db_path, sql, timeout_seconds=timeout)
-        except SqlExecutionError as e:
-            error = e
-            status = "error"
+        if self.sql_cache is not None and sql_role == "explore":
+            cache_key_ast = normalize_sql_ast(sql)
+            rows, error, cache_hit = self.sql_cache.execute_or_get(
+                db_path=db_path,
+                sql=sql,
+                sql_role=sql_role,
+                timeout_seconds=timeout,
+            )
+            if error:
+                status = "error"
+        else:
+            try:
+                rows = execute_sql(db_path, sql, timeout_seconds=timeout)
+            except SqlExecutionError as e:
+                error = e
+                status = "error"
 
         latency_ms = int((time.perf_counter() - t0) * 1000)
-        self._append(
-            {
-                "event": "sql_execute",
-                "run_id": self.run_id,
-                "seq": self._seq,
-                "ts": _utc_now_iso(),
-                "turn_idx": turn_idx,
-                "sql_role": sql_role,
-                "sql_raw": sql,
-                "db_path": str(db_path),
-                "exec_status": status,
-                "latency_ms": latency_ms,
-                "row_count": len(rows) if rows is not None else 0,
-                "error": str(error) if error else None,
-                "result_sample": _sample_rows(rows, max_sample) if rows is not None else [],
-            }
-        )
-        return rows, error
+        event: dict[str, Any] = {
+            "event": "sql_execute",
+            "run_id": self.run_id,
+            "seq": self._seq,
+            "ts": _utc_now_iso(),
+            "turn_idx": turn_idx,
+            "sql_role": sql_role,
+            "sql_raw": sql,
+            "db_path": str(db_path),
+            "exec_status": status,
+            "latency_ms": latency_ms,
+            "row_count": len(rows) if rows is not None else 0,
+            "error": str(error) if error else None,
+            "result_sample": _sample_rows(rows, max_sample) if rows is not None else [],
+        }
+        if self.sql_cache is not None and sql_role == "explore":
+            db_key, sql_key = cache_key_for_sql(sql, db_path=str(db_path.resolve()))
+            event["cache_hit"] = cache_hit
+            event["cache_key_ast"] = cache_key_ast
+            event["cache_key"] = sql_key
+            event["cache_db"] = db_key
+        self._append(event)
+        return rows, error, cache_hit
 
     def log_llm_turn(
         self,
@@ -153,6 +180,71 @@ class RunTrace:
                 "tool_calls": tool_calls,
             }
         )
+
+    def log_stagger_complete(self, *, waited_seconds: float) -> None:
+        self._append(
+            {
+                "event": "stagger_complete",
+                "run_id": self.run_id,
+                "ts": _utc_now_iso(),
+                "waited_seconds": waited_seconds,
+            }
+        )
+
+    def log_discovery_injection(self, *, turn_idx: int, fragment_count: int) -> None:
+        self._append(
+            {
+                "event": "discovery_injection",
+                "run_id": self.run_id,
+                "ts": _utc_now_iso(),
+                "turn_idx": turn_idx,
+                "peer_fragment_count": fragment_count,
+            }
+        )
+
+    def log_semantic_injection(
+        self,
+        *,
+        turn_idx: int,
+        fact_count: int,
+        char_count: int,
+    ) -> None:
+        self._append(
+            {
+                "event": "semantic_injection",
+                "run_id": self.run_id,
+                "ts": _utc_now_iso(),
+                "turn_idx": turn_idx,
+                "peer_fact_count": fact_count,
+                "injected_chars": char_count,
+            }
+        )
+
+    def log_schema_pruning(
+        self,
+        *,
+        selected_tables: list[str],
+        full_chars: int,
+        pruned_chars: int,
+        reduction_pct: float,
+        pruning_applied: bool = True,
+        fallback_reason: str | None = None,
+        pruning_mode: str | None = None,
+    ) -> None:
+        payload: dict[str, Any] = {
+            "event": "schema_pruning",
+            "run_id": self.run_id,
+            "ts": _utc_now_iso(),
+            "selected_tables": selected_tables,
+            "full_chars": full_chars,
+            "pruned_chars": pruned_chars,
+            "reduction_pct": reduction_pct,
+            "pruning_applied": pruning_applied,
+            "fallback_reason": fallback_reason,
+        }
+        if pruning_mode is not None:
+            payload["pruning_mode"] = pruning_mode
+        self._append(payload)
 
     def finish(
         self,

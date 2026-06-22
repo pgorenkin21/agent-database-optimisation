@@ -21,6 +21,19 @@ _RETRYABLE_PHRASES = (
     "rate limit",
     "temporarily unavailable",
     "overloaded",
+    "timed out",
+    "timeout",
+)
+_RETRYABLE_EXCEPTION_NAMES = frozenset(
+    {
+        "APITimeoutError",
+        "APIConnectionError",
+        "TimeoutException",
+        "ReadTimeout",
+        "ConnectTimeout",
+        "WriteTimeout",
+        "PoolTimeout",
+    }
 )
 
 
@@ -56,12 +69,15 @@ def is_retryable_message(text: str) -> bool:
 
 def is_retryable_error(exc: BaseException) -> bool:
     """True for transient provider errors worth backing off and retrying."""
+    name = type(exc).__name__
+    if name in _RETRYABLE_EXCEPTION_NAMES:
+        return True
+
     status = _status_from_exception(exc)
     if status is not None and status in _RETRYABLE_STATUS:
         return True
 
-    name = type(exc).__name__
-    if name in ("APIStatusError", "RateLimitError", "InternalServerError", "APIConnectionError"):
+    if name in ("APIStatusError", "RateLimitError", "InternalServerError"):
         if status is None or status in _RETRYABLE_STATUS:
             return True
 

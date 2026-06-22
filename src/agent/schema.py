@@ -22,26 +22,53 @@ def read_text_with_encoding_fallback(path: Path) -> str:
     return data.decode("utf-8", errors="replace")
 
 
-def _ddl_from_sqlite(db_path: Path) -> str:
+def list_user_tables(db_path: Path) -> list[str]:
     conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
     try:
         rows = conn.execute(
-            "SELECT sql FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
+            "SELECT name FROM sqlite_master "
+            "WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
         ).fetchall()
-        parts = [r[0] for r in rows if r[0]]
+        return [str(r[0]) for r in rows]
+    finally:
+        conn.close()
+
+
+def ddl_for_tables(db_path: Path, tables: list[str] | tuple[str, ...]) -> str:
+    if not tables:
+        return "(no tables found)"
+    conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+    try:
+        parts: list[str] = []
+        for table in tables:
+            row = conn.execute(
+                "SELECT sql FROM sqlite_master WHERE type='table' AND name = ?",
+                (table,),
+            ).fetchone()
+            if row and row[0]:
+                parts.append(str(row[0]))
         return "\n\n".join(parts) if parts else "(no tables found)"
     finally:
         conn.close()
 
 
-def _descriptions_from_csv(db_id: str, databases_dir: Path) -> str:
+def descriptions_for_tables(
+    db_id: str,
+    databases_dir: Path,
+    tables: list[str] | tuple[str, ...],
+) -> str:
+    if not tables:
+        return ""
     desc_dir = databases_dir / db_id / "database_description"
     if not desc_dir.is_dir():
         return ""
 
+    allowed = {str(t).lower() for t in tables}
     sections: list[str] = []
     for csv_path in sorted(desc_dir.glob("*.csv")):
         table = csv_path.stem
+        if table.lower() not in allowed:
+            continue
         lines = [f"Table `{table}` (column reference):"]
         text = read_text_with_encoding_fallback(csv_path)
         reader = csv.DictReader(io.StringIO(text, newline=""))
@@ -62,10 +89,17 @@ def _descriptions_from_csv(db_id: str, databases_dir: Path) -> str:
     return "\n\n".join(sections)
 
 
-def build_schema_context(db_path: Path, databases_dir: Path, db_id: str) -> str:
+def build_schema_context(
+    db_path: Path,
+    databases_dir: Path,
+    db_id: str,
+    *,
+    tables: list[str] | tuple[str, ...] | None = None,
+) -> str:
     """Schema text for the agent system prompt."""
-    ddl = _ddl_from_sqlite(db_path)
-    descriptions = _descriptions_from_csv(db_id, databases_dir)
+    selected = list(tables) if tables is not None else list_user_tables(db_path)
+    ddl = ddl_for_tables(db_path, selected)
+    descriptions = descriptions_for_tables(db_id, databases_dir, selected)
     parts = ["## SQLite schema (CREATE TABLE)", ddl]
     if descriptions:
         parts.extend(["## Column descriptions", descriptions])

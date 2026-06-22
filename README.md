@@ -162,6 +162,135 @@ uv run python scripts/run_batch.py --dry-run --limit 5
 
 Outputs: `runs/batches/batch_<id>_<model>.csv` and `.json` plus per-task traces in `runs/<run_id>.jsonl`.
 
-### Next (Month 1 week 3–4)
+### Phase 2 — Parallel agents (in progress)
 
-Parallel agents on the same task, redundancy analysis scripts.
+Run **N replicas** on the same task, coordinate the final answer, and measure redundancy.
+
+**Policies** (`src/coord/policies.py`):
+
+| Policy | Behaviour |
+|--------|-----------|
+| `best_of_n` | Pick any correct replica (fewest turns); else shortest submission |
+| `first_success` | First replica to finish with EX=1 |
+| `majority_vote` | Largest result-set bucket; prefer correct within bucket |
+
+Per-replica traces use `policy=P0_parallel` (or `P0_early_stop` with `--early-stop`) and `agent_id=agent_0..N-1`. A coordinator trace is written to `runs/coord_<id>.jsonl`.
+
+```bash
+# One task, 3 replicas
+uv run python scripts/run_parallel_one.py --question-id 1471 --replicas 3 --policy best_of_n
+
+# Early stopping: cancel siblings when one replica gets EX=1 (use best_of_n for apples-to-apples vs P0)
+uv run python scripts/run_parallel_one.py --question-id 1471 --replicas 3 --early-stop --policy best_of_n
+
+# Batch (smoke subset)
+uv run python scripts/run_parallel_batch.py --model gemini-2.5-flash --limit 5 --replicas 3
+
+# Batch with early stopping (apples-to-apples: same policy as P0 baseline)
+uv run python scripts/run_parallel_batch.py --model gpt-4o-mini --limit 50 --replicas 10 \
+  --early-stop --policy best_of_n --batch-id earlystop_r10_bo
+
+# Compare early stop vs P0 baseline reports
+uv run python scripts/compare_early_stop.py --early-stop-batch-id earlystop_r10_bo
+
+# P1 shared SQL result cache (explore-query dedup across replicas)
+uv run python scripts/run_parallel_batch.py --model gpt-4o-mini --limit 5 --replicas 3 \
+  --shared-cache --policy best_of_n --batch-id p1_smoke_test
+
+# Compare P1 vs P0 baseline reports + regenerate Chapter 4 draft
+uv run python scripts/compare_p1.py
+uv run python scripts/generate_chapter4_draft.py
+
+# P2 shared discovery board (sub-expression propagation via prompt injection)
+uv run python scripts/run_parallel_batch.py --model gpt-4o-mini --limit 5 --replicas 3 \
+  --discovery-board --policy best_of_n --batch-id p2_smoke_test
+
+# Compare P2 vs P0 baseline reports + regenerate Chapter 5 draft
+uv run python scripts/compare_p2.py
+uv run python scripts/generate_chapter5_draft.py
+
+# Compare P3 vs P2 full stack+prune + recommendations
+uv run python scripts/compare_p3.py
+
+# P3 semantic store (rule-based facts, bounded prompt injection)
+uv run python scripts/run_parallel_batch.py --model gpt-4o-mini --limit 5 --replicas 3 \
+  --semantic-store --shared-cache --policy best_of_n --batch-id p3_smoke_test
+
+# Semantic schema pruning (TF-IDF on column descriptions; modes: keyword | semantic | hybrid)
+uv run python scripts/analyze_schema_pruning.py --mode semantic
+uv run python scripts/run_parallel_batch.py --model gpt-4o-mini --limit 5 --replicas 3 \
+  --schema-pruning --schema-pruning-mode hybrid --batch-id schema_semantic_hybrid
+
+# Middleware stack (P0/P1/P2/P1+P2/early stop/full stack) + Chapter 6 synthesis
+uv run python scripts/compare_middleware_stack.py
+uv run python scripts/compare_p1p2.py
+uv run python scripts/generate_chapter6_draft.py
+
+# Full stack: P1 cache + P2 discovery + early stop (all eval models, N=25)
+uv run python scripts/run_full_stack_sweep.py --dry-run
+uv run python scripts/run_full_stack_sweep.py
+
+# Dry-run task list
+uv run python scripts/run_parallel_batch.py --dry-run --limit 5 --replicas 3
+```
+
+**Redundancy metrics** (in coord trace + batch JSON): duplicate explore SQL, token overhead ratio vs cheapest replica, replicas with EX=1.
+
+### Eval matrix (all models × variations)
+
+Run every model in `llm.eval_models` for each variation. Within a variation, all models run **concurrently** (default 3 workers); variations run one after another.
+
+```bash
+# All 3 models × single-agent + parallel (smoke-50 from config)
+uv run python scripts/run_eval_matrix.py
+
+# Preview the 6 jobs without API calls
+uv run python scripts/run_eval_matrix.py --dry-run --limit 5
+
+# Custom subset, sequential model runs
+uv run python scripts/run_eval_matrix.py --limit 10 --sequential
+
+# Single-agent only
+uv run python scripts/run_eval_matrix.py --variations single
+```
+
+Writes per-model batch JSON/CSV plus a manifest at `runs/batches/matrix_<id>.json`.
+
+### Phase 2a — Baseline redundancy report (P0)
+
+Independent parallel replicas (`P0_parallel`) with no shared middleware. Measures query overlap, sub-expression duplication, token overhead, and wall-clock time for thesis Chapter 2.
+
+```bash
+# Run replica-count sweep (3, 10, 25) on smoke subset — expensive at r=25
+uv run python scripts/run_baseline_sweep.py --model gpt-4o-mini --dry-run
+uv run python scripts/run_baseline_sweep.py --model gpt-4o-mini --replicas 3 10 25
+
+# Analyse existing parallel batches → runs/reports/baseline_<id>.md + .json
+uv run python scripts/analyze_baseline_redundancy.py \
+  --sweep-id 20260610_124547_2f8250 --model gpt-4o-mini --report-id smoke_r3
+```
+
+Metrics: total/unique explore SQL (string + AST), sub-expression overlap (sqlglot fragments), explore redundancy %, token overhead ratio, coordination wall-clock.
+
+```bash
+# Plot scaling curves for all three model reports → runs/reports/plots/*.png
+uv run python scripts/plot_baseline_redundancy.py
+
+# Custom reports or output directory
+uv run python scripts/plot_baseline_redundancy.py \
+  runs/reports/baseline_gemini_baseline_full.json \
+  --out-dir runs/reports/plots/gemini
+```
+
+### Phase 2a — Chapter 2 draft (P0 write-up)
+
+Generate a thesis-ready Chapter 2 markdown from the three baseline report JSON files:
+
+```bash
+uv run python scripts/generate_chapter2_draft.py
+# → thesis/chapter2_baseline_redundancy.md
+```
+
+Figures are embedded from `runs/reports/plots/`. Re-run `plot_baseline_redundancy.py` after updating reports.
+
+**Not yet built:** P4 richer coordination (phase-aware sharing, cross-model ensembles). P1 shared SQL cache (`--shared-cache`), P2 discovery board (`--discovery-board`), and **P3 semantic store** (`--semantic-store`) are available on parallel batch scripts. Schema pruning supports `--schema-pruning-mode keyword|semantic|hybrid`.

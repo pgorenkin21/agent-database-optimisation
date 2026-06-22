@@ -110,6 +110,10 @@ class ProjectConfig:
     def batch_inter_task_delay_seconds(self) -> float:
         return float(self.raw["llm"].get("batch_inter_task_delay_seconds", 0.0))
 
+    @property
+    def llm_request_timeout_seconds(self) -> float:
+        return float(self.raw["llm"].get("request_timeout_seconds", 120.0))
+
     def llm_retry_config(self) -> "RetryConfig":
         from src.llm.retry import RetryConfig
 
@@ -118,6 +122,23 @@ class ProjectConfig:
             base_delay_seconds=self.llm_retry_base_delay_seconds,
             max_delay_seconds=self.llm_retry_max_delay_seconds,
         )
+
+    @property
+    def schema_pruning(self) -> bool:
+        return bool(self.raw.get("schema_pruning", False))
+
+    @property
+    def schema_pruning_mode(self) -> str:
+        return str(self.raw.get("schema_pruning_mode", "keyword"))
+
+    @property
+    def schema_pruning_semantic_min_score(self) -> float:
+        return float(self.raw.get("schema_pruning_semantic_min_score", 0.05))
+
+    @property
+    def semantic_store_config(self) -> dict[str, Any]:
+        raw = self.raw.get("semantic_store", {})
+        return raw if isinstance(raw, dict) else {}
 
     @property
     def runs_dir(self) -> Path:

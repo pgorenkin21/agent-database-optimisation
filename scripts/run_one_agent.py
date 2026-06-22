@@ -30,6 +30,12 @@ def main() -> int:
         help="Model registry key (default: llm.default in config)",
     )
     parser.add_argument("--config", type=Path, default=None)
+    parser.add_argument(
+        "--temperature",
+        type=float,
+        default=None,
+        help="LLM sampling temperature (default: config llm.temperature)",
+    )
     args = parser.parse_args()
 
     load_dotenv(REPO_ROOT / ".env")
@@ -55,11 +61,13 @@ def main() -> int:
     print(f"question_id:  {task.question_id}")
     print(f"db_id:        {task.db_id}")
     print(f"model:        {model_key} ({spec.api_model})")
+    temp = cfg.llm_temperature if args.temperature is None else args.temperature
+    print(f"temperature:  {temp}")
     print(f"difficulty:   {task.difficulty}")
     print(f"question:     {task.question[:100]}...")
     print()
 
-    result = run_agent(task, model_key, cfg)
+    result = run_agent(task, model_key, cfg, temperature=temp)
 
     print(f"trace:        {result.trace_path}")
     print(f"turns:        {result.turns}")

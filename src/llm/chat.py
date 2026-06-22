@@ -45,9 +45,20 @@ def _log_api_retry(attempt: int, exc: BaseException, wait: float) -> None:
 
 
 class OpenAIChatBackend:
-    def __init__(self, spec: ModelSpec, *, retry: RetryConfig | None = None) -> None:
+    def __init__(
+        self,
+        spec: ModelSpec,
+        *,
+        retry: RetryConfig | None = None,
+        request_timeout_seconds: float | None = None,
+        temperature: float = 0.0,
+    ) -> None:
         self.spec = spec
-        self.client = create_chat_client(spec)
+        self._temperature = temperature
+        client_kwargs: dict[str, float] = {}
+        if request_timeout_seconds is not None:
+            client_kwargs["request_timeout_seconds"] = request_timeout_seconds
+        self.client = create_chat_client(spec, **client_kwargs)
         self._retry = retry or RetryConfig(max_attempts=1)
 
     def complete(self, messages: list[dict[str, Any]]) -> ChatResponse:
@@ -63,7 +74,7 @@ class OpenAIChatBackend:
             messages=messages,
             tools=TOOL_DEFINITIONS_OPENAI,
             tool_choice="auto",
-            temperature=0,
+            temperature=self._temperature,
         )
         choice = response.choices[0].message
         tool_calls: list[ToolCallRequest] = []
@@ -142,9 +153,20 @@ def build_gemini_function_declarations(types: Any) -> list[Any]:
 
 
 class GeminiChatBackend:
-    def __init__(self, spec: ModelSpec, *, retry: RetryConfig | None = None) -> None:
+    def __init__(
+        self,
+        spec: ModelSpec,
+        *,
+        retry: RetryConfig | None = None,
+        request_timeout_seconds: float | None = None,
+        temperature: float = 0.0,
+    ) -> None:
         self.spec = spec
-        self.client = create_chat_client(spec)
+        self._temperature = temperature
+        client_kwargs: dict[str, float] = {}
+        if request_timeout_seconds is not None:
+            client_kwargs["request_timeout_seconds"] = request_timeout_seconds
+        self.client = create_chat_client(spec, **client_kwargs)
         from google.genai import types
 
         self._types = types
@@ -215,7 +237,7 @@ class GeminiChatBackend:
             contents=contents,
             config=types.GenerateContentConfig(
                 tools=self._tools,
-                temperature=0,
+                temperature=self._temperature,
             ),
         )
 
@@ -270,9 +292,16 @@ def create_chat_backend(
     spec: ModelSpec,
     *,
     retry: RetryConfig | None = None,
+    request_timeout_seconds: float | None = None,
+    temperature: float = 0.0,
 ) -> OpenAIChatBackend | GeminiChatBackend:
+    backend_kwargs: dict[str, RetryConfig | float] = {"temperature": temperature}
+    if retry is not None:
+        backend_kwargs["retry"] = retry
+    if request_timeout_seconds is not None:
+        backend_kwargs["request_timeout_seconds"] = request_timeout_seconds
     if spec.provider == "google":
-        return GeminiChatBackend(spec, retry=retry)
+        return GeminiChatBackend(spec, **backend_kwargs)
     if spec.is_openai_compatible():
-        return OpenAIChatBackend(spec, retry=retry)
+        return OpenAIChatBackend(spec, **backend_kwargs)
     raise ValueError(f"Unsupported provider: {spec.provider}")

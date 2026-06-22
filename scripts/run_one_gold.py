@@ -66,7 +66,7 @@ def main() -> int:
 
     def run_sql(sql: str, role: str) -> list | None:
         if trace is not None:
-            rows, err = trace.log_sql_execute(
+            rows, err, _ = trace.log_sql_execute(
                 sql=sql,
                 sql_role=role,
                 db_path=db_path,

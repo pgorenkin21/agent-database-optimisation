@@ -76,6 +76,12 @@ def main() -> int:
         default=None,
         help="Seconds to sleep between tasks (default: llm.batch_inter_task_delay_seconds)",
     )
+    parser.add_argument(
+        "--batch-id",
+        type=str,
+        default=None,
+        help="Fixed batch id for output filenames (default: generated timestamp)",
+    )
     args = parser.parse_args()
 
     load_dotenv(REPO_ROOT / ".env")
@@ -130,7 +136,9 @@ def main() -> int:
         else cfg.batch_inter_task_delay_seconds
     )
 
-    batch_id = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:6]
+    batch_id = args.batch_id or (
+        datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:6]
+    )
     out_dir = args.output_dir or (cfg.runs_dir / "batches")
     csv_path = out_dir / f"batch_{batch_id}_{model_key}.csv"
     json_path = out_dir / f"batch_{batch_id}_{model_key}.json"

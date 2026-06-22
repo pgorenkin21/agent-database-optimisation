@@ -13,6 +13,10 @@ def test_load_default_mini_dev_config() -> None:
     assert len(cfg.eval_model_keys) == 3
     assert cfg.seed == 42
     assert cfg.subset_limit == 50
+    assert cfg.llm_request_timeout_seconds == 120.0
+    assert cfg.schema_pruning_mode == "keyword"
+    assert cfg.schema_pruning_semantic_min_score == 0.05
+    assert cfg.semantic_store_config["max_entries"] == 128
 
 
 def test_load_full_dev_config() -> None:

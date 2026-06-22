@@ -29,11 +29,11 @@ def test_trace_writes_start_sql_end(tmp_path: Path, cfg) -> None:
         db_id=task.db_id,
         runs_dir=tmp_path,
     )
-    gold_rows, err = trace.log_sql_execute(
+    gold_rows, err, _ = trace.log_sql_execute(
         sql=task.gold_sql, sql_role="gold", db_path=db_path
     )
     assert err is None
-    pred_rows, err2 = trace.log_sql_execute(
+    pred_rows, err2, _ = trace.log_sql_execute(
         sql=task.gold_sql, sql_role="predicted", db_path=db_path
     )
     assert err2 is None
@@ -76,7 +76,7 @@ def test_trace_logs_sql_error(tmp_path: Path, cfg) -> None:
         db_id=task.db_id,
         runs_dir=tmp_path,
     )
-    rows, err = trace.log_sql_execute(
+    rows, err, _ = trace.log_sql_execute(
         sql="SELECT * FROM not_a_real_table_xyz",
         sql_role="predicted",
         db_path=db_path,

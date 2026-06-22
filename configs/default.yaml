@@ -14,6 +14,17 @@ bird:
 
 use_evidence: true
 
+# Prune schema context to tables matched from question+evidence (+ FK neighbors).
+schema_pruning: false
+# keyword | semantic (TF-IDF on column descriptions) | hybrid (50/50 blend)
+schema_pruning_mode: keyword
+schema_pruning_semantic_min_score: 0.05
+
+semantic_store:
+  max_entries: 128
+  max_inject_chars: 500
+  max_inject_bullets: 8
+
 llm:
   models_config: configs/models.yaml
   default: gpt-4o-mini
@@ -29,7 +40,20 @@ llm:
   retry_max_attempts: 6
   retry_base_delay_seconds: 2
   retry_max_delay_seconds: 60
+  # Per-request HTTP read timeout; hung calls fail fast and use retry_max_* backoff
+  request_timeout_seconds: 120
   batch_inter_task_delay_seconds: 1.5
+
+coordination:
+  sql_cache_max_entries: 4096
+  discovery_max_fragments: 256
+  # Replica schedule defaults (override via CLI on parallel batch scripts)
+  temperature_mode: uniform   # uniform | ladder
+  temperature_step: 0.2
+  stagger_mode: none          # none | linear_seconds | linear_turns
+  stagger_seconds: 0.0
+  stagger_turns: 0
+  stagger_poll_seconds: 1.0
 
 database:
   engine: duckdb
