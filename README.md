@@ -2,7 +2,7 @@
 
 Schema pruning, a semantic fact store, and cache-stable structure for parallel text-to-SQL agents.
 
-**Pasha Gorenkin** · MSc Project 2025/26 · School of Electronic Engineering and Computer Science, Queen Mary University of London
+**Pavel Gorenkin** · MSc Project 2025/26 · School of Electronic Engineering and Computer Science, Queen Mary University of London
 
 This is the supporting material for the dissertation research paper. It holds the agent harness, the three prompt-layer methods the paper evaluates, the experiment runners, the analysis that produces every number in the paper, and the scripts that build the paper's figures and tables.
 
