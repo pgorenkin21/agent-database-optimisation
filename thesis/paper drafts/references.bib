@@ -1,0 +1,368 @@
+% =============================================================================
+% references.bib — MSc thesis bibliography
+% Coordinating Speculative Agent Workloads Over Data Backends
+%
+% Cite keys are prefixed by theme. Chapter mapping (see also thesis/README.md):
+%
+%   ALL CHAPTERS
+%     bird2023, spider2018, zhong2020execution, lei2020schemalinking
+%
+%   Ch. 2 — P0 baseline redundancy
+%     yao2023react, wang2023selfconsistency, wang2025macsql, pourreza2023dinsql
+%
+%   Ch. 3 — Early stopping
+%     chen2023frugalgpt, snell2024testtime, wang2023selfconsistency
+%
+%   Ch. 4 — P1 shared SQL cache
+%     zheng2023gptcache, stonebraker1987postgres
+%
+%   Ch. 5 — P2 sub-expression discovery board
+%     hayesroth1985blackboard, wu2023autogen, hong2023metagpt
+%
+%   Ch. 6 — Middleware stack synthesis
+%     chen2023frugalgpt, wang2025macsql, zhang2023schemalinking, jiang2023llmlingua
+%
+%   Ch. 7 — P3 semantic store
+%     lewis2020rag, zheng2023gptcache, talaie2024chess, karpukhin2020dpr
+%
+%   Ch. 8 — Temperature & stagger
+%     wang2023selfconsistency, brown2024largelanguagemonkeys, snell2024testtime
+%
+%   Ch. 9 — Synthesis & deployment rules
+%     chen2023frugalgpt, wang2025macsql, bird2023
+%
+%   Ch. 10 — Provider prompt caching
+%     openai2024promptcache, google2024geminicache, anthropic2024promptcache, gim2024promptcache
+%
+%   General agent / tool-use background
+%     schick2023toolformer, qin2023toolllm, wooldridge2009mas
+% =============================================================================
+
+
+% --- Benchmark & evaluation -------------------------------------------------
+
+@inproceedings{bird2023,
+  title     = {{Can LLM Already Serve as A Database Interface? A BIg Bench for Large-Scale Database Grounded Text-to-SQLs}},
+  author    = {Li, Jinyang and Hui, Binyuan and Qu, Ge and Yang, Jiaxi and Li, Binhua and Li, Bowen and Wang, Bailin and Qin, Bowen and Geng, Ruiying and Huo, Nan and Zhou, Xuanhe and Ma, Chenhao and Li, Guoliang and Chang, Kevin and Huang, Fei and Cheng, Reynold and Li, Yongbin},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {36},
+  year      = {2023},
+  url       = {https://bird-bench.github.io/},
+  note      = {NeurIPS 2023 Datasets and Benchmarks Spotlight}
+}
+
+@inproceedings{spider2018,
+  title     = {{Spider}: A Large-Scale Human-Labeled Dataset for Complex and Cross-Domain Semantic Parsing and Text-to-{SQL} Task},
+  author    = {Yu, Tao and Zhang, Rui and Yang, Kai and Yasunaga, Michihiro and Wang, Dongxu and Li, Zifan and Ma, James and Zhang, Irene and Yao, Qingning and Roman, Shanelle and others},
+  booktitle = {Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing},
+  pages     = {3911--3921},
+  year      = {2018},
+  address   = {Brussels, Belgium},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/D18-1425/}
+}
+
+@inproceedings{zhong2020execution,
+  title     = {Semantic Evaluation for Text-to-{SQL} with Distilled Test Suites},
+  author    = {Zhong, Rui and Yu, Tao and Klein, Dan},
+  booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing},
+  pages     = {396--411},
+  year      = {2020},
+  address   = {Online},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/2020.emnlp-main.29/}
+}
+
+@inproceedings{lei2020schemalinking,
+  title     = {Re-examining the Role of Schema Linking in Text-to-{SQL}},
+  author    = {Lei, Wenqiang and Ren, Yisong and Zhang, Yue and Radhakrishnan, Minnan and Tung, Buu and Ji, Heng and McAuley, Julian},
+  booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing},
+  pages     = {8373--8386},
+  year      = {2020},
+  address   = {Online},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/2020.emnlp-main.667/}
+}
+
+
+% --- Text-to-SQL methods ------------------------------------------------------
+
+@inproceedings{pourreza2023dinsql,
+  title     = {{DIN-SQL}: Decomposed In-Context Learning of Text-to-{SQL} with Self-Correction},
+  author    = {Pourreza, Mohammadreza and Rafiei, Davood},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {36},
+  year      = {2023},
+  url       = {https://arxiv.org/abs/2304.11015}
+}
+
+@article{gao2024dailsql,
+  title   = {Text-to-{SQL} Empowered by Large Language Models: A Benchmark Evaluation},
+  author  = {Gao, Dawei and Wang, Haibin and Li, Yaliang and Sun, Xiuyu and Qian, Yichen and Ding, Bolin and Zhou, Jingren},
+  journal = {Proceedings of the VLDB Endowment},
+  volume  = {17},
+  number  = {5},
+  pages   = {1132--1145},
+  year    = {2024},
+  doi     = {10.14778/3641204.3641221},
+  note    = {Introduces DAIL-SQL; token-efficient schema prompting}
+}
+
+@inproceedings{wang2020ratsql,
+  title     = {{RAT-SQL}: Relation-Aware Schema Encoding and Linking for Text-to-{SQL} Parsers},
+  author    = {Wang, Bailin and Shin, Richard and Liu, Xiaodong and Polymenakos, Julie and Yu, Tao},
+  booktitle = {Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics},
+  pages     = {7567--7578},
+  year      = {2020},
+  address   = {Online},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/2020.acl-main.677/}
+}
+
+@inproceedings{scholak2021picard,
+  title     = {{PICARD}: Parsing Incrementally for Constrained Auto-Regressive Decoding from Language Models},
+  author    = {Scholak, Torsten and Zayats, Yaroslav and Bahdanau, Dzmitry and Auli, Michael},
+  booktitle = {Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing},
+  pages     = {9905--9910},
+  year      = {2021},
+  address   = {Online and Punta Cana, Dominican Republic},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/2021.emnlp-main.779/}
+}
+
+@article{talaie2024chess,
+  title   = {{CHESS}: Contextual Harnessing for Efficient {SQL} Synthesis},
+  author  = {Talaei, Shayan and others},
+  journal = {arXiv preprint arXiv:2405.16755},
+  year    = {2024},
+  url     = {https://arxiv.org/abs/2405.16755}
+}
+
+
+% --- Tool-using and agentic LLM loops -----------------------------------------
+
+@inproceedings{yao2023react,
+  title     = {{ReAct}: Synergizing Reasoning and Acting in Language Models},
+  author    = {Yao, Shunyu and Zhao, Jeffrey and Yu, Dian and Du, Nan and Shafran, Izhak and Narasimhan, Karthik and Cao, Yuan},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2023},
+  url       = {https://arxiv.org/abs/2210.03629}
+}
+
+@inproceedings{schick2023toolformer,
+  title     = {Toolformer: Language Models Can Teach Themselves to Use Tools},
+  author    = {Schick, Timo and Dwivedi-Yu, Jane and Dess{\`\i}, Roberto and Raileanu, Roberta and Lomeli, Maria and Hambro, Eric and Zettlemoyer, Luke and Cancedda, Nicola and Scialom, Thomas},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {36},
+  year      = {2023},
+  url       = {https://arxiv.org/abs/2302.04761}
+}
+
+@article{qin2023toolllm,
+  title   = {{ToolLLM}: Facilitating Large Language Models to Master 16000+ Real-world APIs},
+  author  = {Qin, Yujia and Liang, Shihao and Ye, Yining and Zhu, Kunlun and Yan, Lan and Lu, Yaxi and Lin, Yankai and Cong, Xin and Tang, Xiangru and Qian, Bill and others},
+  journal = {arXiv preprint arXiv:2307.16789},
+  year    = {2023},
+  url     = {https://arxiv.org/abs/2307.16789}
+}
+
+
+% --- Parallel inference, best-of-N, diversity ---------------------------------
+
+@inproceedings{wang2023selfconsistency,
+  title     = {Self-Consistency Improves Chain of Thought Reasoning in Language Models},
+  author    = {Wang, Xuezhi and Wei, Jason and Schuurmans, Dale and Le, Quoc and Chi, Ed and Narang, Sharan and Chowdhery, Aakanksha and Zhou, Denny},
+  booktitle = {International Conference on Learning Representations},
+  year      = {2023},
+  url       = {https://arxiv.org/abs/2203.11171}
+}
+
+@article{snell2024testtime,
+  title   = {Scaling {LLM} Test-Time Compute Optimally Can Be More Effective than Scaling Model Parameters},
+  author  = {Snell, Charlie and Lee, Jaehoon and Xu, Kelvin and Kumar, Aviral},
+  journal = {arXiv preprint arXiv:2408.03314},
+  year    = {2024},
+  url     = {https://arxiv.org/abs/2408.03314}
+}
+
+@article{chen2023frugalgpt,
+  title   = {{FrugalGPT}: How to Use Large Language Models While Reducing Cost and Improving Performance},
+  author  = {Chen, Lingjiao and Zaharia, Matei and Zou, James},
+  journal = {Transactions on Machine Learning Research},
+  year    = {2023},
+  url     = {https://arxiv.org/abs/2305.05176}
+}
+
+@article{brown2024largelanguagemonkeys,
+  title   = {Large Language Monkeys: Scaling Inference Compute with Repeated Sampling},
+  author  = {Brown, Bradley and Juravsky, Jordan and Ehrlich, Ryan and Clark, Ronald and Le, Quoc and R{\'e}, Christopher and Mirhoseini, Azalia},
+  journal = {arXiv preprint arXiv:2407.21787},
+  year    = {2024},
+  url     = {https://arxiv.org/abs/2407.21787}
+}
+
+
+% --- Multi-agent coordination -------------------------------------------------
+
+@inproceedings{wang2025macsql,
+  title     = {{MAC-SQL}: A Multi-Agent Collaborative Framework for Text-to-{SQL}},
+  author    = {Wang, Bing and Ren, Changyu and Yang, Jian and Liang, Xinnian and Bai, Jiaqi and Chai, LinZheng and Yan, Zhao and Zhang, Qian-Wen and Yin, Di and Sun, Xing and Li, Zhoujun},
+  booktitle = {Proceedings of the 31st International Conference on Computational Linguistics},
+  pages     = {540--557},
+  year      = {2025},
+  address   = {Abu Dhabi, UAE},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/2025.coling-main.36/},
+  note      = {arXiv:2312.11242}
+}
+
+@article{hong2023metagpt,
+  title   = {{MetaGPT}: Meta Programming for A Multi-Agent Collaborative Framework},
+  author  = {Hong, Sirui and Zhuge, Mingchen and Chen, Jonathan and Zheng, Xiawu and Cheng, Yuheng and Zhang, Ceyao and Wang, Jianqi and Wang, Zili and Yau, Steven Ka Shing and Lin, Zijuan and others},
+  journal = {arXiv preprint arXiv:2308.00352},
+  year    = {2023},
+  url     = {https://arxiv.org/abs/2308.00352}
+}
+
+@article{wu2023autogen,
+  title   = {{AutoGen}: Enabling Next-Gen {LLM} Applications via Multi-Agent Conversation},
+  author  = {Wu, Qingyun and Bansal, Gagan and Zhang, Jieyu and Wu, Yiran and Li, Beibin and Zhu, Erkang and Jiang, Li and Zhang, Xiaoyun and Wang, Chi and Liu, Yi and others},
+  journal = {arXiv preprint arXiv:2308.08155},
+  year    = {2023},
+  url     = {https://arxiv.org/abs/2308.08155}
+}
+
+@article{hayesroth1985blackboard,
+  title   = {A Blackboard Architecture for Control},
+  author  = {Hayes-Roth, Barbara},
+  journal = {AI Magazine},
+  volume  = {6},
+  number  = {3},
+  pages   = {251--271},
+  year    = {1985},
+  url     = {https://ojs.aaai.org/aimagazine/index.php/aimagazine/article/view/510}
+}
+
+@book{wooldridge2009mas,
+  title     = {An Introduction to MultiAgent Systems},
+  author    = {Wooldridge, Michael},
+  year      = {2009},
+  edition   = {2},
+  publisher = {John Wiley \& Sons},
+  address   = {Chichester, UK}
+}
+
+
+% --- Caching & deduplication --------------------------------------------------
+
+@inproceedings{zheng2023gptcache,
+  title     = {{GPTCache}: An Open-Source Semantic Cache for {LLM} Applications},
+  author    = {Zheng, Bang and Zhang, Jundong and Mo, Xiang and Liu, Chen and Liu, Yu},
+  booktitle = {Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing: System Demonstrations},
+  pages     = {131--138},
+  year      = {2023},
+  address   = {Singapore},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/2023.emnlp-demo.13/}
+}
+
+@article{gim2024promptcache,
+  title   = {Prompt Cache: Modular Attention Reuse for Low-Latency Inference},
+  author  = {Gim, In Goo and Rajbhandari, Samyam and Yao, Zhewei and Aminabadi, Reza Yazdan and Rasley, Jeff and He, Yuxiong},
+  journal = {arXiv preprint arXiv:2311.04934},
+  year    = {2024},
+  url     = {https://arxiv.org/abs/2311.04934}
+}
+
+@inproceedings{stonebraker1987postgres,
+  title     = {The Design of {POSTGRES}},
+  author    = {Stonebraker, Michael and Rowe, Lawrence A},
+  booktitle = {Proceedings of the 1987 ACM SIGMOD International Conference on Management of Data},
+  pages     = {340--355},
+  year      = {1987},
+  publisher = {ACM},
+  note      = {Classical result caching and materialisation — background for P1 SQL result reuse}
+}
+
+
+% --- RAG, retrieval, schema context -------------------------------------------
+
+@inproceedings{lewis2020rag,
+  title     = {Retrieval-Augmented Generation for Knowledge-Intensive {NLP} Tasks},
+  author    = {Lewis, Patrick and Perez, Ethan and Piktus, Aleksandra and Petroni, Fabio and Karpukhin, Vladimir and Goyal, Naman and K{\"u}ttler, Heinrich and Lewis, Mike and Yih, Wen-tau and Rockt{\"a}schel, Tim and others},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {33},
+  pages     = {9459--9474},
+  year      = {2020},
+  url       = {https://arxiv.org/abs/2005.11401}
+}
+
+@inproceedings{karpukhin2020dpr,
+  title     = {Dense Passage Retrieval for Open-Domain Question Answering},
+  author    = {Karpukhin, Vladimir and O{\u{g}}uz, Barlas and Min, Sewon and Lewis, Patrick and Wu, Ledell and Edunov, Sergey and Chen, Danqi and Yih, Wen-tau},
+  booktitle = {Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing},
+  pages     = {6769--6781},
+  year      = {2020},
+  address   = {Online},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/2020.emnlp-main.550/}
+}
+
+@article{jiang2023llmlingua,
+  title   = {{LLMLingua}: Compressing Prompts for Accelerated Inference of Large Language Models},
+  author  = {Jiang, Huiqiang and Wu, Qianhui and Lin, Chin-Yew and Yang, Yuqing and Qiu, Liliang},
+  journal = {arXiv preprint arXiv:2310.05736},
+  year    = {2023},
+  url     = {https://arxiv.org/abs/2310.05736}
+}
+
+@inproceedings{zhang2023schemalinking,
+  title     = {Benchmarking and Improving Schema Linking for Text-to-{SQL}},
+  author    = {Zhang, Yujian and Wang, Bailin and Yu, Tao},
+  booktitle = {Findings of the Association for Computational Linguistics: EMNLP 2023},
+  pages     = {10297--10309},
+  year      = {2023},
+  address   = {Singapore},
+  publisher = {Association for Computational Linguistics},
+  url       = {https://aclanthology.org/2023.findings-emnlp.690/}
+}
+
+
+% --- Provider prompt caching -----------------------------------------
+@misc{openai2024promptcache,
+  title        = {Prompt Caching},
+  author       = {{OpenAI}},
+  year         = {2024},
+  howpublished = {API documentation},
+  url          = {https://platform.openai.com/docs/guides/prompt-caching},
+  note         = {Automatic prefix caching for GPT models; \texttt{cached\_tokens} in usage}
+}
+
+@misc{google2024geminicache,
+  title        = {Context Caching},
+  author       = {{Google DeepMind}},
+  year         = {2024},
+  howpublished = {Gemini API documentation},
+  url          = {https://ai.google.dev/gemini-api/docs/caching},
+  note         = {Implicit and explicit context caching; \texttt{cached\_content\_token\_count}}
+}
+
+@misc{anthropic2024promptcache,
+  title        = {Prompt Caching},
+  author       = {{Anthropic}},
+  year         = {2024},
+  howpublished = {API documentation},
+  url          = {https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching},
+  note         = {Explicit \texttt{cache\_control} breakpoints for Claude models}
+}
+
+
+% --- Software -----------------------------------------------------------------
+
+@misc{sqlglot2024,
+  title   = {sqlglot: Python {SQL} Parser and Transpiler},
+  author  = {Mao, Toby and contributors},
+  year    = {2024},
+  url     = {https://github.com/tobymao/sqlglot},
+  note    = {AST normalisation (P1 cache keys) and fragment extraction (P2 overlap metric)}
+}

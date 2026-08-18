@@ -20,6 +20,16 @@ schema_pruning: false
 schema_pruning_mode: keyword
 schema_pruning_semantic_min_score: 0.05
 
+# Persistent per-database profile card (Chapter 12). Requires the prompt-cache loop;
+# artifacts are built offline by scripts/build_db_profile.py into profiles_dir.
+db_profile: false
+profiles_dir: data/profiles
+db_profile_char_budget: 1500
+
+# P4 structural explore suppression (Chapter 13). Requires the prompt-cache loop.
+explore_suppressor: false
+explore_suppressor_max_suppressions: 64
+
 semantic_store:
   max_entries: 128
   max_inject_chars: 500
@@ -63,5 +73,7 @@ database:
 
 logging:
   runs_dir: runs
-  log_llm_messages: false
+  # Emit per-turn `llm_turn` events (prompt/completion/cached tokens) for
+  # turn-by-turn cache curves. Cached input tokens are logged by CachedRunTrace.
+  log_llm_messages: true
   experiment_tracker: none

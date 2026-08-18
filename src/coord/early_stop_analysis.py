@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from src.coord.interaction_metrics import batch_interaction_summary
+from src.llm.cost import batch_cost_usd
 
 
 def load_batch(path: Path) -> dict[str, Any]:
@@ -58,6 +59,7 @@ def batch_summary(data: dict[str, Any], *, path: Path | None = None) -> dict[str
         "avg_explore_redundancy_pct": data.get("avg_explore_redundancy_pct"),
         "avg_token_overhead_ratio": data.get("avg_token_overhead_ratio"),
         "total_tokens": total_tokens,
+        "total_cost_usd": batch_cost_usd(rows, data.get("model_key", "")),
         "early_stop_triggered_count": len(triggered),
         "avg_replicas_cancelled": round(avg_cancel, 2),
         "avg_tokens_per_task_triggered": round(tok_triggered) if tok_triggered is not None else None,

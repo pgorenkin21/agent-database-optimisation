@@ -1,0 +1,33 @@
+batch_id:     p2_smoke_test
+model:        gpt-4o-mini
+replicas:     3
+policy:       best_of_n
+early_stop:   False
+shared_cache: False
+discovery:    True
+tasks:        5
+output:       /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_p2_smoke_test_gpt-4o-mini_r3_best_of_n_p2_discovery.json
+
+[1/5] question_id=1471 (simple) x3 ...
+  -> EX=1 (3/3 replicas correct)
+
+[2/5] question_id=1472 (moderate) x3 ...
+  -> EX=0 (0/3 replicas correct)
+
+[3/5] question_id=1473 (moderate) x3 ...
+  -> EX=0 (0/3 replicas correct)
+
+[4/5] question_id=1476 (challenging) x3 ...
+  -> EX=0 (0/3 replicas correct)
+
+[5/5] question_id=1479 (moderate) x3 ...
+  -> EX=0 (0/3 replicas correct)
+
+Parallel batch p2_smoke_test
+  Tasks:      5 / 5
+  EX:         20.0%
+  Avg overhead ratio: 3.032
+  Avg explore redundancy: 46.17%
+
+Wrote /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_p2_smoke_test_gpt-4o-mini_r3_best_of_n_p2_discovery.json
+Wrote /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_p2_smoke_test_gpt-4o-mini_r3_best_of_n_p2_discovery.csv

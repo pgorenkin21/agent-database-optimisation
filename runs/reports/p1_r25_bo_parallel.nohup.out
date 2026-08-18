@@ -1,0 +1,5 @@
+=== P1 r=25 parallel sweep started 2026-06-17T10:09:35Z ===
+Launched gpt-4o-mini (PID 1778)
+Launched gemini-2.5-flash (PID 1782)
+Launched deepseek-v3.2 (PID 1787)
+=== P1 r=25 sweep complete (fail=0) 2026-06-17T10:36:37Z ===

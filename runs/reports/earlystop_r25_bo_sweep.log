@@ -1,0 +1,54 @@
+=== Parallel early stop r=25 sweep started 2026-06-16T11:28:25Z ===
+Launched gpt-4o-mini (PID 39474)
+Launched gemini-2.5-flash (PID 39478)
+Launched deepseek-v3.2 (PID 39483)
+WARNING: gpt-4o-mini exited non-zero
+WARNING: gemini-2.5-flash exited non-zero
+WARNING: deepseek-v3.2 exited non-zero
+
+=== Running comparison report ===
+# Early Stop vs P0 Comparison
+
+Generated: 2026-06-16T12:31:44.337287+00:00
+
+Apples-to-apples: same model, replica count, and `best_of_n` policy. Only difference is `--early-stop` (P0_parallel vs P0_early_stop traces).
+
+## Summary
+
+| Model | P0 EX % | ES EX % | P0 redundancy % | ES redundancy % | P0 tokens | ES tokens | Token Δ | P0 overhead | ES overhead | ES triggered |
+|-------|--------:|--------:|----------------:|----------------:|----------:|----------:|--------:|------------:|------------:|-------------:|
+| GPT-4o mini | 62.0 | 62.0 | 87.7 | 87.9 | 6,322,822 | 5,800,147 | -8.3% | 27.14× | 23.79× | 31/50 |
+| Gemini 2.5 Flash | 70.0 | 64.0 | 76.6 | 69.8 | 3,685,459 | 3,251,203 | -11.8% | 24.46× | 18.77× | 32/50 |
+| DeepSeek V3.2 | 64.0 | 58.0 | 82.9 | 85.4 | 18,889,223 | 16,633,789 | -11.9% | 32.66× | 25.89× | 29/50 |
+
+## GPT-4o mini
+
+- P0 batch: `parallel_gpt_baseline_redo_jun13tier2v2_baseline_r25_gpt-4o-mini_r25_best_of_n.json`
+- Early stop batch: `parallel_earlystop_r25_bo_gpt-4o-mini_r25_best_of_n_early_stop.json`
+- Early stop triggered: **31/50** tasks
+- Avg replicas cancelled: **13.7** per task
+
+- Avg tokens/task when triggered: **86,910** (vs **163,470** when not triggered)
+
+## Gemini 2.5 Flash
+
+- P0 batch: `parallel_20260611_123711_91299c_baseline_r25_gemini-2.5-flash_r25_best_of_n.json`
+- Early stop batch: `parallel_earlystop_r25_bo_gemini-2.5-flash_r25_best_of_n_early_stop.json`
+- Early stop triggered: **32/50** tasks
+- Avg replicas cancelled: **14.76** per task
+
+- Avg tokens/task when triggered: **73,293** (vs **50,324** when not triggered)
+
+## DeepSeek V3.2
+
+- P0 batch: `parallel_20260611_123747_60b677_baseline_r25_deepseek-v3.2_r25_best_of_n.json`
+- Early stop batch: `parallel_earlystop_r25_bo_deepseek-v3.2_r25_best_of_n_early_stop.json`
+- Early stop triggered: **29/50** tasks
+- Avg replicas cancelled: **13.8** per task
+
+- Avg tokens/task when triggered: **246,965** (vs **451,038** when not triggered)
+
+
+Wrote /workspaces/Cursor Agent Database Optimisation/runs/reports/early_stop_r25_vs_p0.md
+Wrote /workspaces/Cursor Agent Database Optimisation/runs/reports/early_stop_r25_vs_p0.json
+=== Parallel sweep complete (fail=1) 2026-06-16T12:31:44Z ===

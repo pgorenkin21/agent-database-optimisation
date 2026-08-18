@@ -1,0 +1,28 @@
+[Full-500 N=3] GPT P1 vs P0: n=498 Δ=+2.8 pp CI=[+0.6, +5.2]
+[Full-500 N=3] GPT prune vs P0: n=498 Δ=+0.2 pp CI=[-3.0, +3.4] †
+[Full-500 N=3] GPT prompt-cache vs P0: n=498 Δ=+0.8 pp CI=[-1.2, +3.0] †
+[Full-500 N=3] Gemini P1 vs P0: n=497 Δ=+1.4 pp CI=[-0.2, +3.2] †
+[Full-500 N=3] Gemini prune vs P0: n=494 Δ=-1.2 pp CI=[-3.8, +1.4] †
+[Full-500 N=3] Gemini prompt-cache vs P0: n=497 Δ=+0.2 pp CI=[-1.0, +1.4] †
+[Full-500 N=3] DeepSeek P1 vs P0: n=498 Δ=+1.2 pp CI=[-1.0, +3.4] †
+[Full-500 N=3] DeepSeek prune vs P0: n=498 Δ=+0.4 pp CI=[-2.0, +2.8] †
+[Full-500 N=3] DeepSeek prompt-cache vs P0: n=498 Δ=+0.8 pp CI=[-1.4, +3.0] †
+[Smoke N=25] GPT P1 vs P0: n=50 Δ=+0.0 pp CI=[-6.0, +6.0] †
+[Smoke N=25] GPT prune vs P0: n=50 Δ=-2.0 pp CI=[-10.0, +4.0] †
+[Smoke N=25] Gemini P1 vs P0: n=46 Δ=+0.0 pp CI=[+0.0, +0.0] †
+[Smoke N=25] Gemini prune vs P0: n=47 Δ=+0.0 pp CI=[-6.4, +6.4] †
+[Smoke N=25] DeepSeek P1 vs P0: n=50 Δ=-2.0 pp CI=[-6.0, +0.0] †
+[Smoke N=25] DeepSeek prune vs P0: n=50 Δ=-2.0 pp CI=[-6.0, +0.0] †
+[Smoke N=25] GPT prompt-cache vs base: n=49 Δ=+4.1 pp CI=[+0.0, +10.2] †
+[Smoke N=25] Gemini prompt-cache vs base: n=48 Δ=+2.1 pp CI=[+0.0, +6.2] †
+[Smoke N=25] DeepSeek prompt-cache vs base: n=50 Δ=-2.0 pp CI=[-6.0, +0.0] †
+[Smoke N=25] GPT P4 vs PC-base: n=50 Δ=+4.0 pp CI=[+0.0, +10.0] †
+[Smoke N=25] GPT P1+P4 vs P1+PC: n=50 Δ=-2.0 pp CI=[-6.0, +0.0] †
+[Smoke N=25] Gemini P4 vs PC-base: n=50 Δ=+0.0 pp CI=[-6.0, +6.0] †
+[Smoke N=25] Gemini P1+P4 vs P1+PC: n=48 Δ=+0.0 pp CI=[+0.0, +0.0] †
+[Smoke N=25] DeepSeek P4 vs PC-base: n=50 Δ=+6.0 pp CI=[+0.0, +14.0] †
+[Smoke N=25] DeepSeek P1+P4 vs P1+PC: n=50 Δ=-2.0 pp CI=[-10.0, +4.0] †
+[Smoke N=10] GPT P3 stack vs P2 stack: n=50 Δ=+4.0 pp CI=[-4.0, +12.0] †
+[Smoke N=10] Gemini P3 stack vs P2 stack: n=50 Δ=-6.0 pp CI=[-16.0, +4.0] †
+[Smoke N=10] DeepSeek P3 stack vs P2 stack: n=50 Δ=-4.0 pp CI=[-10.0, +0.0] †
+wrote /workspaces/Cursor Agent Database Optimisation/runs/reports/bootstrap_ex_cis_v4.md

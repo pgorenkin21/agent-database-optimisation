@@ -1,0 +1,18 @@
+# Auto-generated failed question_ids for Gemini repair
+# source: runs/batches/parallel_baseline_full500_r25_gemini-2.5-flash_r25_best_of_n.json
+# count: 15
+944  # formula_1 challenging 504 DEADLINE_EXCEEDED. {'error': {'code'
+345  # card_games moderate 504 DEADLINE_EXCEEDED. {'error': {'code'
+402  # card_games moderate [SSL: UNEXPECTED_EOF_WHILE_READING] EOF 
+405  # card_games moderate Server disconnected without sending a re
+409  # card_games moderate Server disconnected without sending a re
+149  # financial challenging 429 RESOURCE_EXHAUSTED. {'error': {'code
+152  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code
+159  # financial simple 429 RESOURCE_EXHAUSTED. {'error': {'code
+168  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code
+169  # financial challenging 429 RESOURCE_EXHAUSTED. {'error': {'code
+173  # financial challenging 429 RESOURCE_EXHAUSTED. {'error': {'code
+186  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code
+189  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code
+192  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code
+194  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code

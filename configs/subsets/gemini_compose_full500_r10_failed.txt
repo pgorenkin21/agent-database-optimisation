@@ -1,0 +1,12 @@
+# Auto-generated failed question_ids for Gemini repair
+# source: runs/batches/parallel_compose_full500_r10_gemini-2.5-flash_r10_best_of_n_p1_cache_promptcache_early_stop_schema_prune_p4suppress.json
+# count: 9
+944  # formula_1 challenging 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Stream cancelled; RPC
+1002  # formula_1 moderate 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Stream cancelled; RPC
+825  # superhero moderate 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'The request timed out
+710  # codebase_community simple Query timed out after 30.0s
+716  # codebase_community moderate Query timed out after 30.0s
+186  # financial moderate [Errno 111] Connection refused
+189  # financial moderate [Errno 111] Connection refused
+192  # financial moderate [Errno 111] Connection refused
+194  # financial moderate [Errno 111] Connection refused

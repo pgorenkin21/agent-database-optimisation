@@ -13,17 +13,78 @@ __pycache__/
 .env
 .env.local
 
-# Data & experiment outputs (large / local)
+# BIRD mini-dev is ~5 GB and is redistributed under its own licence. Fetch it
+# with scripts/fetch_bird.py rather than committing it.
 data/bird/**/*
 !data/bird/mini_dev/.gitkeep
 !data/bird/full_dev/.gitkeep
+# Generated per-database profile cards. They belong to the db-profile policy,
+# which was cut from the study, and they rebuild from the databases.
+data/profiles/
+
+# Per-replica JSONL traces are the raw record and there are tens of thousands.
+# The batch summaries below carry every number the paper reports, so those are
+# committed and the traces are not.
 runs/*
 !runs/.gitkeep
 !runs/batches/
 runs/batches/*
 !runs/batches/.gitkeep
+# Committed evidence: the analysis outputs only. These are small and they carry
+# every number the paper prints, so a reader can check any claim without a
+# clone costing 30 MB. The batch summaries the analysis reads are 29 MB and go
+# in the submission zip instead; scripts/make_submission.py selects them.
+!runs/reports/
+runs/logs/
+runs/overnight/
 wandb/
 mlruns/
+
+# Third-party material that is not mine to redistribute: the QMUL project
+# handbook, the IEEE/QMUL LaTeX templates, and an example dissertation.
+pdf_documents/
+latex template/
+other docs/
+
+# Working drafts. The submitted paper and essay are built from thesis/paper
+# drafts/v9_sections/ by scripts/assemble_v9.py; the intermediate LaTeX,
+# compiled PDFs and superseded versions are all regenerable.
+thesis/paper drafts/*.aux
+thesis/paper drafts/*.log
+thesis/paper drafts/*.out
+thesis/paper drafts/*.zip
+thesis/paper drafts/draft_paper_ieee_v[1-8]*
+thesis/paper drafts/draft_paper*.pdf
+thesis/paper drafts/v8_sections/
+thesis/paper drafts/projectdraft_*.zip
+# Superseded working documents from earlier versions of the paper.
+thesis/paper drafts/draft_paper.*
+thesis/paper drafts/draft_paper_ieee.tex
+thesis/paper drafts/draft_paper_ieee_focused.*
+thesis/paper drafts/draft_report.*
+thesis/paper drafts/dissertation_outline.md
+thesis/paper drafts/reflective_essay.md
+thesis/paper drafts/v8_handoff.md
+thesis/paper drafts/video_plan.md
+thesis/chapter*.md
+thesis/chapters/
+# Superseded: drawn from a different task set, and its numbers contradict §3.3
+# of the paper. Replaced by fig7_redundancy.png.
+thesis/figures/baseline_explore_redundancy.png
+thesis/paper drafts/figures/
+writeup/
+
+# Build artefact of scripts/make_submission.py, rebuilt on demand.
+submission_*.zip
+
+# Agent/IDE tooling and container config. Not part of the project, and the
+# GenAI declaration that the guide does require lives in the paper's appendix
+# and this README, not here.
+.claude/
+.devcontainer/
+.cursor/
+.cursorrules
+CLAUDE.md
 
 # OS & editors
 .DS_Store

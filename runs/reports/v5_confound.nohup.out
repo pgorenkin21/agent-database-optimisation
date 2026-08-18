@@ -1,0 +1,36 @@
+overnight_stamp=20260810_203730_v5_confound
+started_utc=2026-08-10T20:37:30Z
+paper=draft_paper_ieee_v5 — DeepSeek model-era confound + seed gaps
+=== WAVE A: DS P0 (v4f) | Gemini P3 rep1 redo | GPT P1 rep2 ===
+[20:37:30] START A_ds_baseline_full500_r3_v4f
+[20:37:30] START A_gemini_p3_full500_r3_redo
+[20:37:30] START A_gpt_p1_full500_r3_rep2
+[22:13:50] FAIL  A_gpt_p1_full500_r3_rep2 (rc=1) — see /workspaces/Cursor Agent Database Optimisation/runs/overnight/20260810_203730_v5_confound/A_gpt_p1_full500_r3_rep2.log
+[22:40:00] FAIL  A_ds_baseline_full500_r3_v4f (rc=1) — see /workspaces/Cursor Agent Database Optimisation/runs/overnight/20260810_203730_v5_confound/A_ds_baseline_full500_r3_v4f.log
+[22:50:13] FAIL  A_gemini_p3_full500_r3_redo (rc=1) — see /workspaces/Cursor Agent Database Optimisation/runs/overnight/20260810_203730_v5_confound/A_gemini_p3_full500_r3_redo.log
+[22:50:13] wave_A_done
+=== WAVE B: DS prompt-cache (v4f) | GPT prune rep2 ===
+[22:50:13] START B_ds_pc_full500_r3_v4f
+[22:50:13] START B_gpt_prune_full500_r3_rep2
+[23:54:56] FAIL  B_gpt_prune_full500_r3_rep2 (rc=1) — see /workspaces/Cursor Agent Database Optimisation/runs/overnight/20260810_203730_v5_confound/B_gpt_prune_full500_r3_rep2.log
+[01:00:57] FAIL  B_ds_pc_full500_r3_v4f (rc=1) — see /workspaces/Cursor Agent Database Optimisation/runs/overnight/20260810_203730_v5_confound/B_ds_pc_full500_r3_v4f.log
+[01:00:57] wave_B_done
+=== WAVE C: DS P1 (v4f) | Gemini P1 rep2 ===
+[01:00:57] START C_ds_p1_full500_r3_v4f
+[01:00:57] START C_gemini_p1_full500_r3_rep2
+[02:20:49] FAIL  C_gemini_p1_full500_r3_rep2 (rc=1) — see /workspaces/Cursor Agent Database Optimisation/runs/overnight/20260810_203730_v5_confound/C_gemini_p1_full500_r3_rep2.log
+[03:28:08] FAIL  C_ds_p1_full500_r3_v4f (rc=1) — see /workspaces/Cursor Agent Database Optimisation/runs/overnight/20260810_203730_v5_confound/C_ds_p1_full500_r3_v4f.log
+[03:28:08] wave_C_done
+=== Offline robustness pack refresh ===
+=== DeepSeek era comparison (the answer) ===
+DeepSeek P0 July  (V3.2)     : (51.4, '2026-07-16')
+DeepSeek P0 today (v4-flash) : (58.8, '2026-08-10')
+era shift = +7.4 pp
+compose vs P0 claimed +7.0 pp -> within-era delta is -0.4 pp
+finished_utc=2026-08-11T03:28:16Z
+-rw-r--r-- 1 vscode vscode 193951 Aug 11 03:28 /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_p1_full500_r3_v4f_deepseek-v3.2_r3_best_of_n_p1_cache.csv
+-rw-r--r-- 1 vscode vscode 804552 Aug 11 03:28 /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_p1_full500_r3_v4f_deepseek-v3.2_r3_best_of_n_p1_cache.json
+-rw-r--r-- 1 vscode vscode 193324 Aug 11 01:00 /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_pc_full500_r3_v4f_deepseek-v3.2_r3_best_of_n_promptcache.csv
+-rw-r--r-- 1 vscode vscode 805959 Aug 11 01:00 /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_pc_full500_r3_v4f_deepseek-v3.2_r3_best_of_n_promptcache.json
+-rw-r--r-- 1 vscode vscode 190924 Aug 10 22:40 /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_baseline_full500_r3_v4f_deepseek-v3.2_r3_best_of_n.csv
+-rw-r--r-- 1 vscode vscode 803529 Aug 10 22:40 /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_baseline_full500_r3_v4f_deepseek-v3.2_r3_best_of_n.json

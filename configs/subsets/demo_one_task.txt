@@ -1,0 +1,19 @@
+# Single task for the presentation demo.
+#
+# Question 937, formula_1. Chosen so that both demo beats work on
+# one run, which the earlier debit_card_specializing task could not do:
+#
+#   pruning   full schema ~2,962 tokens -> pruned ~1,588, a 46.4% cut, and
+#             gold-table recall is complete, so the prune is a clean win rather
+#             than a fallback.
+#   caching   the PRUNED prefix is still ~1,588 tokens, comfortably over the
+#             1,024-token minimum OpenAI requires before it caches a prefix at
+#             all. On debit_card_specializing the whole schema was ~563 tokens,
+#             so nothing was ever eligible and every turn reported 0 cached.
+#
+# That threshold is why the two methods can fight on this provider: pruning a
+# prefix below 1,024 tokens disqualifies it from caching entirely.
+# It is also one of 32 questions the composed arm answered correctly at full
+# scale on this model, so the demo is unlikely to end on EX=0. Question 1092 was
+# the first candidate and all five replicas got it wrong.
+937

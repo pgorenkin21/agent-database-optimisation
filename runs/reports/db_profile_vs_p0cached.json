@@ -1,0 +1,298 @@
+{
+  "comparisons": [
+    {
+      "baseline": {
+        "path": "/workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_dbprofile_base_r10_bo_gpt-4o-mini_r10_best_of_n_promptcache.json",
+        "batch_id": "dbprofile_base_r10_bo",
+        "model_key": "gpt-4o-mini",
+        "policy": "best_of_n",
+        "n_replicas": 10,
+        "early_stop": false,
+        "task_count": 50,
+        "ex_accuracy_pct": 54.0,
+        "api_failure_count": 4,
+        "ex_accuracy_excluding_api_errors_pct": 58.7,
+        "avg_explore_redundancy_pct": 71.59,
+        "avg_token_overhead_ratio": 9.61,
+        "total_tokens": 2062180,
+        "early_stop_triggered_count": 0,
+        "avg_replicas_cancelled": 0.0,
+        "avg_tokens_per_task_triggered": null,
+        "avg_tokens_per_task_not_triggered": 41244,
+        "total_db_interactions": 1622,
+        "total_middleware_cache_hits": 0,
+        "total_middleware_discovery_injections": 0,
+        "total_middleware_semantic_injections": 0,
+        "total_middleware_interactions": 0,
+        "total_interactions": 1622,
+        "batch_middleware_interaction_pct": 0.0,
+        "avg_middleware_interaction_pct": 0.0,
+        "traces_found": 46,
+        "mean_explore_per_task": 25.391,
+        "mean_join_explores_per_task": 7.022,
+        "mean_value_domain_explores_per_task": 4.087,
+        "mean_other_explores_per_task": 14.283,
+        "explore_by_db": {
+          "debit_card_specializing": {
+            "task_count": 28,
+            "mean_explore_per_task": 28.75,
+            "mean_value_domain_per_task": 5.929,
+            "mean_join_per_task": 8.071
+          },
+          "student_club": {
+            "task_count": 18,
+            "mean_explore_per_task": 20.167,
+            "mean_value_domain_per_task": 1.222,
+            "mean_join_per_task": 5.389
+          }
+        },
+        "db_profile": false,
+        "policy_label": "P0_cached"
+      },
+      "db_profile": {
+        "path": "/workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_dbprofile_iso_r10_bo_gpt-4o-mini_r10_best_of_n_promptcache_dbprofile.json",
+        "batch_id": "dbprofile_iso_r10_bo",
+        "model_key": "gpt-4o-mini",
+        "policy": "best_of_n",
+        "n_replicas": 10,
+        "early_stop": false,
+        "task_count": 50,
+        "ex_accuracy_pct": 60.0,
+        "api_failure_count": 0,
+        "ex_accuracy_excluding_api_errors_pct": 60.0,
+        "avg_explore_redundancy_pct": 79.38,
+        "avg_token_overhead_ratio": 10.338,
+        "total_tokens": 2928503,
+        "early_stop_triggered_count": 0,
+        "avg_replicas_cancelled": 0.0,
+        "avg_tokens_per_task_triggered": null,
+        "avg_tokens_per_task_not_triggered": 58570,
+        "total_db_interactions": 1788,
+        "total_middleware_cache_hits": 0,
+        "total_middleware_discovery_injections": 0,
+        "total_middleware_semantic_injections": 0,
+        "total_middleware_interactions": 0,
+        "total_interactions": 1788,
+        "batch_middleware_interaction_pct": 0.0,
+        "avg_middleware_interaction_pct": 0.0,
+        "traces_found": 50,
+        "mean_explore_per_task": 25.98,
+        "mean_join_explores_per_task": 8.48,
+        "mean_value_domain_explores_per_task": 4.06,
+        "mean_other_explores_per_task": 13.44,
+        "explore_by_db": {
+          "debit_card_specializing": {
+            "task_count": 30,
+            "mean_explore_per_task": 28.233,
+            "mean_value_domain_per_task": 5.2,
+            "mean_join_per_task": 9.633
+          },
+          "student_club": {
+            "task_count": 20,
+            "mean_explore_per_task": 22.6,
+            "mean_value_domain_per_task": 2.35,
+            "mean_join_per_task": 6.75
+          }
+        },
+        "db_profile": true,
+        "policy_label": "dbprofile"
+      }
+    },
+    {
+      "baseline": {
+        "path": "/workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_dbprofile_base_r10_bo_gemini-2.5-flash_r10_best_of_n_promptcache.json",
+        "batch_id": "dbprofile_base_r10_bo",
+        "model_key": "gemini-2.5-flash",
+        "policy": "best_of_n",
+        "n_replicas": 10,
+        "early_stop": false,
+        "task_count": 50,
+        "ex_accuracy_pct": 72.0,
+        "api_failure_count": 0,
+        "ex_accuracy_excluding_api_errors_pct": 72.0,
+        "avg_explore_redundancy_pct": 68.01,
+        "avg_token_overhead_ratio": 10.608,
+        "total_tokens": 1584557,
+        "early_stop_triggered_count": 0,
+        "avg_replicas_cancelled": 0.0,
+        "avg_tokens_per_task_triggered": null,
+        "avg_tokens_per_task_not_triggered": 31691,
+        "total_db_interactions": 1158,
+        "total_middleware_cache_hits": 0,
+        "total_middleware_discovery_injections": 0,
+        "total_middleware_semantic_injections": 0,
+        "total_middleware_interactions": 0,
+        "total_interactions": 1158,
+        "batch_middleware_interaction_pct": 0.0,
+        "avg_middleware_interaction_pct": 0.0,
+        "traces_found": 50,
+        "mean_explore_per_task": 13.16,
+        "mean_join_explores_per_task": 3.8,
+        "mean_value_domain_explores_per_task": 4.44,
+        "mean_other_explores_per_task": 4.92,
+        "explore_by_db": {
+          "debit_card_specializing": {
+            "task_count": 30,
+            "mean_explore_per_task": 15.433,
+            "mean_value_domain_per_task": 6.733,
+            "mean_join_per_task": 2.333
+          },
+          "student_club": {
+            "task_count": 20,
+            "mean_explore_per_task": 9.75,
+            "mean_value_domain_per_task": 1.0,
+            "mean_join_per_task": 6.0
+          }
+        },
+        "db_profile": false,
+        "policy_label": "P0_cached"
+      },
+      "db_profile": {
+        "path": "/workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_dbprofile_iso_r10_bo_gemini-2.5-flash_r10_best_of_n_promptcache_dbprofile.json",
+        "batch_id": "dbprofile_iso_r10_bo",
+        "model_key": "gemini-2.5-flash",
+        "policy": "best_of_n",
+        "n_replicas": 10,
+        "early_stop": false,
+        "task_count": 50,
+        "ex_accuracy_pct": 78.0,
+        "api_failure_count": 0,
+        "ex_accuracy_excluding_api_errors_pct": 78.0,
+        "avg_explore_redundancy_pct": 74.52,
+        "avg_token_overhead_ratio": 10.607,
+        "total_tokens": 2106405,
+        "early_stop_triggered_count": 0,
+        "avg_replicas_cancelled": 0.0,
+        "avg_tokens_per_task_triggered": null,
+        "avg_tokens_per_task_not_triggered": 42128,
+        "total_db_interactions": 1128,
+        "total_middleware_cache_hits": 0,
+        "total_middleware_discovery_injections": 0,
+        "total_middleware_semantic_injections": 0,
+        "total_middleware_interactions": 0,
+        "total_interactions": 1128,
+        "batch_middleware_interaction_pct": 0.0,
+        "avg_middleware_interaction_pct": 0.0,
+        "traces_found": 50,
+        "mean_explore_per_task": 12.56,
+        "mean_join_explores_per_task": 5.04,
+        "mean_value_domain_explores_per_task": 2.88,
+        "mean_other_explores_per_task": 4.64,
+        "explore_by_db": {
+          "debit_card_specializing": {
+            "task_count": 30,
+            "mean_explore_per_task": 12.633,
+            "mean_value_domain_per_task": 4.067,
+            "mean_join_per_task": 3.933
+          },
+          "student_club": {
+            "task_count": 20,
+            "mean_explore_per_task": 12.45,
+            "mean_value_domain_per_task": 1.1,
+            "mean_join_per_task": 6.7
+          }
+        },
+        "db_profile": true,
+        "policy_label": "dbprofile"
+      }
+    },
+    {
+      "baseline": {
+        "path": "/workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_dbprofile_base_r10_bo_deepseek-v3.2_r10_best_of_n_promptcache.json",
+        "batch_id": "dbprofile_base_r10_bo",
+        "model_key": "deepseek-v3.2",
+        "policy": "best_of_n",
+        "n_replicas": 10,
+        "early_stop": false,
+        "task_count": 50,
+        "ex_accuracy_pct": 60.0,
+        "api_failure_count": 0,
+        "ex_accuracy_excluding_api_errors_pct": 60.0,
+        "avg_explore_redundancy_pct": 73.8,
+        "avg_token_overhead_ratio": 13.64,
+        "total_tokens": 7414990,
+        "early_stop_triggered_count": 0,
+        "avg_replicas_cancelled": 0.0,
+        "avg_tokens_per_task_triggered": null,
+        "avg_tokens_per_task_not_triggered": 148300,
+        "total_db_interactions": 3576,
+        "total_middleware_cache_hits": 0,
+        "total_middleware_discovery_injections": 0,
+        "total_middleware_semantic_injections": 0,
+        "total_middleware_interactions": 0,
+        "total_interactions": 3576,
+        "batch_middleware_interaction_pct": 0.0,
+        "avg_middleware_interaction_pct": 0.0,
+        "traces_found": 50,
+        "mean_explore_per_task": 62.12,
+        "mean_join_explores_per_task": 17.22,
+        "mean_value_domain_explores_per_task": 15.52,
+        "mean_other_explores_per_task": 29.38,
+        "explore_by_db": {
+          "debit_card_specializing": {
+            "task_count": 30,
+            "mean_explore_per_task": 75.767,
+            "mean_value_domain_per_task": 21.233,
+            "mean_join_per_task": 22.233
+          },
+          "student_club": {
+            "task_count": 20,
+            "mean_explore_per_task": 41.65,
+            "mean_value_domain_per_task": 6.95,
+            "mean_join_per_task": 9.7
+          }
+        },
+        "db_profile": false,
+        "policy_label": "P0_cached"
+      },
+      "db_profile": {
+        "path": "/workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_dbprofile_iso_r10_bo_deepseek-v3.2_r10_best_of_n_promptcache_dbprofile.json",
+        "batch_id": "dbprofile_iso_r10_bo",
+        "model_key": "deepseek-v3.2",
+        "policy": "best_of_n",
+        "n_replicas": 10,
+        "early_stop": false,
+        "task_count": 50,
+        "ex_accuracy_pct": 60.0,
+        "api_failure_count": 0,
+        "ex_accuracy_excluding_api_errors_pct": 60.0,
+        "avg_explore_redundancy_pct": 69.97,
+        "avg_token_overhead_ratio": 14.638,
+        "total_tokens": 8249720,
+        "early_stop_triggered_count": 0,
+        "avg_replicas_cancelled": 0.0,
+        "avg_tokens_per_task_triggered": null,
+        "avg_tokens_per_task_not_triggered": 164994,
+        "total_db_interactions": 3268,
+        "total_middleware_cache_hits": 0,
+        "total_middleware_discovery_injections": 0,
+        "total_middleware_semantic_injections": 0,
+        "total_middleware_interactions": 0,
+        "total_interactions": 3268,
+        "batch_middleware_interaction_pct": 0.0,
+        "avg_middleware_interaction_pct": 0.0,
+        "traces_found": 50,
+        "mean_explore_per_task": 56.04,
+        "mean_join_explores_per_task": 17.64,
+        "mean_value_domain_explores_per_task": 18.6,
+        "mean_other_explores_per_task": 19.8,
+        "explore_by_db": {
+          "debit_card_specializing": {
+            "task_count": 30,
+            "mean_explore_per_task": 64.667,
+            "mean_value_domain_per_task": 25.5,
+            "mean_join_per_task": 20.0
+          },
+          "student_club": {
+            "task_count": 20,
+            "mean_explore_per_task": 43.1,
+            "mean_value_domain_per_task": 8.25,
+            "mean_join_per_task": 14.1
+          }
+        },
+        "db_profile": true,
+        "policy_label": "dbprofile"
+      }
+    }
+  ]
+}

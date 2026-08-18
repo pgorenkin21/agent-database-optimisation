@@ -1,0 +1,5 @@
+# Auto-generated failed question_ids for Gemini repair
+# source: runs/batches/parallel_baseline_full500_r10_gemini-2.5-flash_r10_best_of_n.json
+# count: 2
+1338  # student_club moderate Server disconnected without sending a re
+473  # card_games moderate 503 UNAVAILABLE. {'error': {'code': 503,

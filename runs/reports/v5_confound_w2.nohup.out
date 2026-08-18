@@ -1,0 +1,12 @@
+overnight_stamp=20260811_064604_v5_confound_w2
+started_utc=2026-08-11T06:46:04Z
+paper=draft_paper_ieee_v5 — remaining DeepSeek v4-flash controls
+=== DeepSeek v4-flash controls (sequential, one provider) ===
+[06:46:04] START ds_schema_prune_iso_full500_r3_v4f
+[08:38:47] DONE  ds_schema_prune_iso_full500_r3_v4f (rc=1; rc=1 is normal — see NOTE)
+[08:38:47] START ds_fullstack_prune_full500_r3_v4f
+[10:23:27] DONE  ds_fullstack_prune_full500_r3_v4f (rc=1; rc=1 is normal — see NOTE)
+=== Completeness check ===
+schema_prune_iso_full500_r3_v4f: tasks=500 completed=500 apifail=0 EX=58.8
+fullstack_prune_full500_r3_v4f: tasks=500 completed=500 apifail=0 EX=57.2
+finished_utc=2026-08-11T10:23:27Z

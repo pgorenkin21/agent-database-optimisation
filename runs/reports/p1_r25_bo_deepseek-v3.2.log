@@ -1,0 +1,197 @@
+=== deepseek-v3.2 started 2026-06-17T10:09:35Z ===
+batch_id:     p1_r25_bo
+model:        deepseek-v3.2
+replicas:     25
+policy:       best_of_n
+early_stop:   False
+shared_cache: True
+tasks:        50
+output:       /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_p1_r25_bo_deepseek-v3.2_r25_best_of_n_p1_cache.json
+
+[1/50] question_id=1471 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[2/50] question_id=1472 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[3/50] question_id=1473 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[4/50] question_id=1476 (challenging) x25 ...
+  -> EX=1 (9/25 replicas correct)
+
+[5/50] question_id=1479 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[6/50] question_id=1480 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[7/50] question_id=1481 (challenging) x25 ...
+=== RESTARTED BY USER 2026-06-17T10:36:46Z ===
+batch_id:     p1_r25_bo
+model:        deepseek-v3.2
+replicas:     25
+policy:       best_of_n
+early_stop:   False
+shared_cache: True
+tasks:        50
+output:       /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_p1_r25_bo_deepseek-v3.2_r25_best_of_n_p1_cache.json
+
+[1/50] question_id=1471 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[2/50] question_id=1472 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[3/50] question_id=1473 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[4/50] question_id=1476 (challenging) x25 ...
+  -> EX=1 (8/25 replicas correct)
+
+[5/50] question_id=1479 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[6/50] question_id=1480 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[7/50] question_id=1481 (challenging) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[8/50] question_id=1482 (challenging) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[9/50] question_id=1483 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[10/50] question_id=1484 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[11/50] question_id=1486 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[12/50] question_id=1490 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[13/50] question_id=1493 (simple) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[14/50] question_id=1498 (simple) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[15/50] question_id=1500 (simple) x25 ...
+  -> EX=1 (3/25 replicas correct)
+
+[16/50] question_id=1501 (moderate) x25 ...
+  -> EX=1 (17/25 replicas correct)
+
+[17/50] question_id=1505 (simple) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[18/50] question_id=1506 (moderate) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[19/50] question_id=1507 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[20/50] question_id=1509 (moderate) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[21/50] question_id=1514 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[22/50] question_id=1515 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[23/50] question_id=1521 (moderate) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[24/50] question_id=1524 (simple) x25 ...
+  -> EX=1 (3/25 replicas correct)
+
+[25/50] question_id=1525 (simple) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[26/50] question_id=1526 (challenging) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[27/50] question_id=1528 (simple) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[28/50] question_id=1529 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[29/50] question_id=1531 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[30/50] question_id=1533 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[31/50] question_id=1312 (simple) x25 ...
+  -> EX=1 (24/25 replicas correct)
+
+[32/50] question_id=1317 (moderate) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[33/50] question_id=1322 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[34/50] question_id=1323 (moderate) x25 ...
+  -> EX=1 (15/25 replicas correct)
+
+[35/50] question_id=1331 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[36/50] question_id=1334 (simple) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[37/50] question_id=1338 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[38/50] question_id=1339 (challenging) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[39/50] question_id=1340 (moderate) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[40/50] question_id=1344 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[41/50] question_id=1346 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[42/50] question_id=1350 (moderate) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[43/50] question_id=1351 (simple) x25 ...
+  -> EX=1 (20/25 replicas correct)
+
+[44/50] question_id=1352 (moderate) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[45/50] question_id=1356 (simple) x25 ...
+  -> EX=1 (4/25 replicas correct)
+
+[46/50] question_id=1357 (simple) x25 ...
+  -> EX=1 (24/25 replicas correct)
+
+[47/50] question_id=1359 (challenging) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[48/50] question_id=1361 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[49/50] question_id=1362 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[50/50] question_id=1368 (simple) x25 ...
+  -> EX=1 (10/25 replicas correct)
+
+Parallel batch p1_r25_bo
+  Tasks:      50 / 50
+  EX:         62.0%
+  Avg overhead ratio: 34.019
+  Avg explore redundancy: 81.95%
+
+Wrote /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_p1_r25_bo_deepseek-v3.2_r25_best_of_n_p1_cache.json
+Wrote /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_p1_r25_bo_deepseek-v3.2_r25_best_of_n_p1_cache.csv

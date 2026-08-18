@@ -1,0 +1,1183 @@
+{
+  "report_id": "schema_pruning",
+  "pruning_mode": "keyword",
+  "generated_at": "2026-06-27T13:27:57.972088+00:00",
+  "task_count": 50,
+  "full_gold_recall_count": 50,
+  "full_gold_recall_pct": 100.0,
+  "avg_reduction_pct": 34.52,
+  "avg_selected_tables": 3.44,
+  "full_schema_fallback_count": 2,
+  "rows": [
+    {
+      "question_id": 1471,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "customers",
+        "transactions_1k",
+        "gasstations",
+        "yearmonth"
+      ],
+      "gold_tables": [
+        "customers"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1472,
+      "db_id": "debit_card_specializing",
+      "difficulty": "moderate",
+      "total_tables": 5,
+      "selected_tables": [
+        "yearmonth",
+        "transactions_1k",
+        "customers",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "customers",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1473,
+      "db_id": "debit_card_specializing",
+      "difficulty": "moderate",
+      "total_tables": 5,
+      "selected_tables": [
+        "yearmonth",
+        "customers",
+        "transactions_1k",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "customers",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1476,
+      "db_id": "debit_card_specializing",
+      "difficulty": "challenging",
+      "total_tables": 5,
+      "selected_tables": [
+        "yearmonth",
+        "customers",
+        "transactions_1k",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "customers",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1479,
+      "db_id": "debit_card_specializing",
+      "difficulty": "moderate",
+      "total_tables": 5,
+      "selected_tables": [
+        "yearmonth",
+        "transactions_1k",
+        "customers",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "customers",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1480,
+      "db_id": "debit_card_specializing",
+      "difficulty": "moderate",
+      "total_tables": 5,
+      "selected_tables": [
+        "yearmonth",
+        "customers",
+        "transactions_1k",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "customers",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1481,
+      "db_id": "debit_card_specializing",
+      "difficulty": "challenging",
+      "total_tables": 5,
+      "selected_tables": [
+        "yearmonth",
+        "customers",
+        "transactions_1k",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "customers",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1482,
+      "db_id": "debit_card_specializing",
+      "difficulty": "challenging",
+      "total_tables": 5,
+      "selected_tables": [
+        "yearmonth",
+        "transactions_1k",
+        "customers",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "customers",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1483,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "yearmonth",
+        "transactions_1k",
+        "customers",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1484,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "gasstations",
+        "transactions_1k"
+      ],
+      "gold_tables": [
+        "gasstations"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1247,
+      "reduction_pct": 44.63,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1486,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "transactions_1k",
+        "customers",
+        "gasstations",
+        "yearmonth"
+      ],
+      "gold_tables": [
+        "customers"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1490,
+      "db_id": "debit_card_specializing",
+      "difficulty": "moderate",
+      "total_tables": 5,
+      "selected_tables": [
+        "customers",
+        "transactions_1k",
+        "gasstations",
+        "yearmonth"
+      ],
+      "gold_tables": [
+        "customers",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1493,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "yearmonth",
+        "customers",
+        "transactions_1k",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1498,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "yearmonth",
+        "transactions_1k",
+        "customers",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1500,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "customers",
+        "gasstations",
+        "products",
+        "transactions_1k",
+        "yearmonth"
+      ],
+      "gold_tables": [
+        "products",
+        "transactions_1k",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 2252,
+      "reduction_pct": 0.0,
+      "pruning_applied": false,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1501,
+      "db_id": "debit_card_specializing",
+      "difficulty": "moderate",
+      "total_tables": 5,
+      "selected_tables": [
+        "yearmonth",
+        "transactions_1k",
+        "customers",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "gasstations",
+        "transactions_1k",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1505,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "customers",
+        "transactions_1k",
+        "yearmonth",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "customers",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1506,
+      "db_id": "debit_card_specializing",
+      "difficulty": "moderate",
+      "total_tables": 5,
+      "selected_tables": [
+        "gasstations",
+        "transactions_1k",
+        "products"
+      ],
+      "gold_tables": [
+        "gasstations",
+        "products",
+        "transactions_1k"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1501,
+      "reduction_pct": 33.35,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1507,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "transactions_1k",
+        "customers",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "gasstations",
+        "transactions_1k"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1578,
+      "reduction_pct": 29.93,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1509,
+      "db_id": "debit_card_specializing",
+      "difficulty": "moderate",
+      "total_tables": 5,
+      "selected_tables": [
+        "gasstations",
+        "transactions_1k"
+      ],
+      "gold_tables": [
+        "gasstations",
+        "transactions_1k"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1247,
+      "reduction_pct": 44.63,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1514,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "transactions_1k",
+        "customers",
+        "gasstations",
+        "yearmonth"
+      ],
+      "gold_tables": [
+        "customers",
+        "gasstations",
+        "transactions_1k"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1515,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "transactions_1k",
+        "customers",
+        "gasstations",
+        "yearmonth"
+      ],
+      "gold_tables": [
+        "customers",
+        "transactions_1k"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1521,
+      "db_id": "debit_card_specializing",
+      "difficulty": "moderate",
+      "total_tables": 5,
+      "selected_tables": [
+        "gasstations",
+        "transactions_1k"
+      ],
+      "gold_tables": [
+        "gasstations",
+        "transactions_1k"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1247,
+      "reduction_pct": 44.63,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1524,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "transactions_1k",
+        "customers",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "gasstations",
+        "transactions_1k"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1578,
+      "reduction_pct": 29.93,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1525,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "customers",
+        "transactions_1k",
+        "gasstations",
+        "yearmonth"
+      ],
+      "gold_tables": [
+        "customers",
+        "transactions_1k"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1526,
+      "db_id": "debit_card_specializing",
+      "difficulty": "challenging",
+      "total_tables": 5,
+      "selected_tables": [
+        "transactions_1k",
+        "yearmonth",
+        "customers",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "gasstations",
+        "transactions_1k",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1528,
+      "db_id": "debit_card_specializing",
+      "difficulty": "simple",
+      "total_tables": 5,
+      "selected_tables": [
+        "gasstations",
+        "customers",
+        "transactions_1k",
+        "yearmonth"
+      ],
+      "gold_tables": [
+        "gasstations"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1529,
+      "db_id": "debit_card_specializing",
+      "difficulty": "moderate",
+      "total_tables": 5,
+      "selected_tables": [
+        "transactions_1k",
+        "yearmonth",
+        "customers",
+        "gasstations"
+      ],
+      "gold_tables": [
+        "gasstations",
+        "transactions_1k",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1531,
+      "db_id": "debit_card_specializing",
+      "difficulty": "moderate",
+      "total_tables": 5,
+      "selected_tables": [
+        "transactions_1k",
+        "customers",
+        "gasstations",
+        "yearmonth"
+      ],
+      "gold_tables": [
+        "customers",
+        "transactions_1k",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 1998,
+      "reduction_pct": 11.28,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1533,
+      "db_id": "debit_card_specializing",
+      "difficulty": "moderate",
+      "total_tables": 5,
+      "selected_tables": [
+        "customers",
+        "gasstations",
+        "products",
+        "transactions_1k",
+        "yearmonth"
+      ],
+      "gold_tables": [
+        "transactions_1k",
+        "yearmonth"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 2252,
+      "pruned_chars": 2252,
+      "reduction_pct": 0.0,
+      "pruning_applied": false,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1312,
+      "db_id": "student_club",
+      "difficulty": "simple",
+      "total_tables": 8,
+      "selected_tables": [
+        "major",
+        "member"
+      ],
+      "gold_tables": [
+        "major",
+        "member"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 1620,
+      "reduction_pct": 75.13,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1317,
+      "db_id": "student_club",
+      "difficulty": "moderate",
+      "total_tables": 8,
+      "selected_tables": [
+        "event",
+        "member",
+        "attendance"
+      ],
+      "gold_tables": [
+        "attendance",
+        "event",
+        "member"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 2479,
+      "reduction_pct": 61.94,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1322,
+      "db_id": "student_club",
+      "difficulty": "moderate",
+      "total_tables": 8,
+      "selected_tables": [
+        "event",
+        "member",
+        "zip_code",
+        "attendance"
+      ],
+      "gold_tables": [
+        "attendance",
+        "event"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 3165,
+      "reduction_pct": 51.4,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1323,
+      "db_id": "student_club",
+      "difficulty": "moderate",
+      "total_tables": 8,
+      "selected_tables": [
+        "event",
+        "attendance"
+      ],
+      "gold_tables": [
+        "attendance",
+        "event"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 1400,
+      "reduction_pct": 78.5,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1331,
+      "db_id": "student_club",
+      "difficulty": "simple",
+      "total_tables": 8,
+      "selected_tables": [
+        "budget",
+        "income",
+        "member"
+      ],
+      "gold_tables": [
+        "income",
+        "member"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 2894,
+      "reduction_pct": 55.57,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1334,
+      "db_id": "student_club",
+      "difficulty": "simple",
+      "total_tables": 8,
+      "selected_tables": [
+        "member",
+        "zip_code"
+      ],
+      "gold_tables": [
+        "member",
+        "zip_code"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 1820,
+      "reduction_pct": 72.06,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1338,
+      "db_id": "student_club",
+      "difficulty": "moderate",
+      "total_tables": 8,
+      "selected_tables": [
+        "expense",
+        "event",
+        "attendance",
+        "budget"
+      ],
+      "gold_tables": [
+        "budget",
+        "event",
+        "expense"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 3447,
+      "reduction_pct": 47.08,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1339,
+      "db_id": "student_club",
+      "difficulty": "challenging",
+      "total_tables": 8,
+      "selected_tables": [
+        "expense",
+        "member",
+        "budget",
+        "event",
+        "attendance"
+      ],
+      "gold_tables": [
+        "expense",
+        "member"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 4526,
+      "reduction_pct": 30.51,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1340,
+      "db_id": "student_club",
+      "difficulty": "moderate",
+      "total_tables": 8,
+      "selected_tables": [
+        "event",
+        "budget",
+        "income",
+        "attendance"
+      ],
+      "gold_tables": [
+        "budget",
+        "event"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 3160,
+      "reduction_pct": 51.48,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1344,
+      "db_id": "student_club",
+      "difficulty": "simple",
+      "total_tables": 8,
+      "selected_tables": [
+        "income",
+        "event",
+        "attendance"
+      ],
+      "gold_tables": [
+        "income"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 2215,
+      "reduction_pct": 65.99,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1346,
+      "db_id": "student_club",
+      "difficulty": "simple",
+      "total_tables": 8,
+      "selected_tables": [
+        "member",
+        "attendance"
+      ],
+      "gold_tables": [
+        "member"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 1645,
+      "reduction_pct": 74.74,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1350,
+      "db_id": "student_club",
+      "difficulty": "moderate",
+      "total_tables": 8,
+      "selected_tables": [
+        "event",
+        "expense",
+        "budget",
+        "attendance"
+      ],
+      "gold_tables": [
+        "budget",
+        "expense"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 3447,
+      "reduction_pct": 47.08,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1351,
+      "db_id": "student_club",
+      "difficulty": "simple",
+      "total_tables": 8,
+      "selected_tables": [
+        "major",
+        "member"
+      ],
+      "gold_tables": [
+        "major",
+        "member"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 1620,
+      "reduction_pct": 75.13,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1352,
+      "db_id": "student_club",
+      "difficulty": "moderate",
+      "total_tables": 8,
+      "selected_tables": [
+        "major",
+        "member"
+      ],
+      "gold_tables": [
+        "major",
+        "member"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 1620,
+      "reduction_pct": 75.13,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1356,
+      "db_id": "student_club",
+      "difficulty": "simple",
+      "total_tables": 8,
+      "selected_tables": [
+        "major",
+        "member"
+      ],
+      "gold_tables": [
+        "major",
+        "member"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 1620,
+      "reduction_pct": 75.13,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1357,
+      "db_id": "student_club",
+      "difficulty": "simple",
+      "total_tables": 8,
+      "selected_tables": [
+        "income",
+        "member",
+        "zip_code"
+      ],
+      "gold_tables": [
+        "income",
+        "member"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 2635,
+      "reduction_pct": 59.54,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1359,
+      "db_id": "student_club",
+      "difficulty": "challenging",
+      "total_tables": 8,
+      "selected_tables": [
+        "budget",
+        "event",
+        "income",
+        "attendance"
+      ],
+      "gold_tables": [
+        "budget",
+        "event"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 3160,
+      "reduction_pct": 51.48,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1361,
+      "db_id": "student_club",
+      "difficulty": "simple",
+      "total_tables": 8,
+      "selected_tables": [
+        "expense",
+        "event",
+        "attendance",
+        "budget"
+      ],
+      "gold_tables": [
+        "expense"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 3447,
+      "reduction_pct": 47.08,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1362,
+      "db_id": "student_club",
+      "difficulty": "simple",
+      "total_tables": 8,
+      "selected_tables": [
+        "zip_code",
+        "attendance"
+      ],
+      "gold_tables": [
+        "zip_code"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 1252,
+      "reduction_pct": 80.78,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    },
+    {
+      "question_id": 1368,
+      "db_id": "student_club",
+      "difficulty": "simple",
+      "total_tables": 8,
+      "selected_tables": [
+        "major",
+        "member"
+      ],
+      "gold_tables": [
+        "major",
+        "member"
+      ],
+      "gold_table_recall": 1.0,
+      "full_chars": 6513,
+      "pruned_chars": 1620,
+      "reduction_pct": 75.13,
+      "pruning_applied": true,
+      "fallback_reason": null,
+      "pruning_mode": "keyword",
+      "semantic_scores": null
+    }
+  ]
+}

@@ -68,6 +68,29 @@ def resolve_trace_policy(
     return base
 
 
+def resolve_replica_model_keys(
+    *,
+    model_key: str | None = None,
+    model_keys: list[str] | None = None,
+    n_replicas: int = 3,
+) -> list[str]:
+    """Return one model key per replica (homogeneous or heterogeneous)."""
+    if model_keys is not None:
+        if not model_keys:
+            raise ValueError("model_keys must be non-empty")
+        return list(model_keys)
+    if model_key is None:
+        raise ValueError("model_key or model_keys is required")
+    if n_replicas < 1:
+        raise ValueError("n_replicas must be >= 1")
+    return [model_key] * n_replicas
+
+
+def ensemble_model_label(model_keys: list[str]) -> str:
+    """Stable batch tag / display label for a heterogeneous replica set."""
+    return "+".join(model_keys)
+
+
 @dataclass
 class ParallelRunResult:
     question_id: int
@@ -75,6 +98,7 @@ class ParallelRunResult:
     model_key: str
     policy: CoordinationPolicy
     n_replicas: int
+    replica_model_keys: list[str] = field(default_factory=list)
     replicas: list[AgentRunResult] = field(default_factory=list)
     chosen: AgentRunResult | None = None
     redundancy: RedundancyMetrics | None = None
@@ -90,7 +114,12 @@ class ParallelRunResult:
     discovery_stats: DiscoveryStats | None = None
     semantic_store: bool = False
     semantic_stats: SemanticStoreStats | None = None
+    prompt_cache: bool = False
     replica_schedule: ReplicaScheduleConfig | None = None
+
+    @property
+    def total_cached_prompt_tokens(self) -> int:
+        return self.redundancy.total_cached_prompt_tokens if self.redundancy else 0
 
     @property
     def ex_correct(self) -> int:
@@ -112,12 +141,14 @@ class CoordinationTrace:
         policy: str,
         model_key: str,
         n_replicas: int,
+        replica_model_keys: list[str] | None = None,
         runs_dir: Path | None = None,
         coord_id: str | None = None,
         early_stop: bool = False,
         shared_cache: bool = False,
         discovery_board: bool = False,
         semantic_store: bool = False,
+        prompt_cache: bool = False,
         trace_policy: str = TRACE_POLICY_PARALLEL,
         replica_schedule: ReplicaScheduleConfig | None = None,
     ) -> None:
@@ -140,8 +171,10 @@ class CoordinationTrace:
                 "shared_cache": shared_cache,
                 "discovery_board": discovery_board,
                 "semantic_store": semantic_store,
+                "prompt_cache": prompt_cache,
                 "replica_schedule": replica_schedule.to_dict() if replica_schedule else None,
                 "model": model_key,
+                "replica_model_keys": replica_model_keys or [model_key] * n_replicas,
                 "n_replicas": n_replicas,
                 "bird_split": cfg.bird_split,
                 "seed": cfg.seed,
@@ -153,19 +186,25 @@ class CoordinationTrace:
         with self.path.open("a", encoding="utf-8") as f:
             f.write(line + "\n")
 
-    def log_replica_start(self, profile: ReplicaProfile) -> None:
+    def log_replica_start(self, profile: ReplicaProfile, *, model_key: str) -> None:
         self._append(
             {
                 "event": "replica_start",
                 "coord_id": self.coord_id,
                 "ts": _utc_now_iso(),
                 "agent_id": f"agent_{profile.agent_idx}",
+                "model": model_key,
                 **profile.to_dict(),
             }
         )
 
     def log_replica_complete(
-        self, replica: AgentRunResult, *, agent_idx: int, finish_rank: int
+        self,
+        replica: AgentRunResult,
+        *,
+        agent_idx: int,
+        finish_rank: int,
+        model_key: str,
     ) -> None:
         self._append(
             {
@@ -173,6 +212,7 @@ class CoordinationTrace:
                 "coord_id": self.coord_id,
                 "ts": _utc_now_iso(),
                 "agent_id": f"agent_{agent_idx}",
+                "model": model_key,
                 "finish_rank": finish_rank,
                 "trace_path": str(replica.trace_path),
                 "ex_correct": replica.ex_correct,
@@ -180,6 +220,7 @@ class CoordinationTrace:
                 "stop_reason": replica.stop_reason,
                 "prompt_tokens": replica.total_prompt_tokens,
                 "completion_tokens": replica.total_completion_tokens,
+                "cached_prompt_tokens": getattr(replica, "total_cached_prompt_tokens", 0),
                 "error": replica.error,
             }
         )
@@ -234,8 +275,9 @@ class CoordinationTrace:
 
 def run_parallel_agents(
     task: BirdTask,
-    model_key: str,
+    model_key: str | None = None,
     *,
+    model_keys: list[str] | None = None,
     n_replicas: int = 3,
     policy: CoordinationPolicy = CoordinationPolicy.BEST_OF_N,
     cfg: ProjectConfig | None = None,
@@ -245,6 +287,8 @@ def run_parallel_agents(
     shared_cache: bool = False,
     discovery_board: bool = False,
     semantic_store: bool = False,
+    prompt_cache: bool = False,
+    explore_suppressor: bool = False,
     sql_cache_max_entries: int | None = None,
     discovery_max_fragments: int | None = None,
     semantic_store_max_entries: int | None = None,
@@ -269,12 +313,27 @@ def run_parallel_agents(
     With ``semantic_store=True``, explore results are distilled into bounded
     natural-language facts injected before each LLM turn (P3).
     """
-    if n_replicas < 1:
-        raise ValueError("n_replicas must be >= 1")
+    replica_model_keys = resolve_replica_model_keys(
+        model_key=model_key,
+        model_keys=model_keys,
+        n_replicas=n_replicas,
+    )
+    n_replicas = len(replica_model_keys)
+    display_model_key = (
+        ensemble_model_label(replica_model_keys)
+        if len(set(replica_model_keys)) > 1
+        else replica_model_keys[0]
+    )
 
     cfg = cfg or load_config()
     workers = max_workers or n_replicas
     schedule = replica_schedule or schedule_from_config(cfg)
+    # Prompt cache: opt into the Zone-1-frozen, cache-aware loop. Default-off keeps the
+    # baseline replica path (src.agent.loop.run_agent) byte-for-byte unchanged.
+    if prompt_cache:
+        from src.agent.loop_cached import run_agent as run_replica_agent
+    else:
+        run_replica_agent = run_agent
     trace_policy = resolve_trace_policy(
         shared_cache=shared_cache,
         early_stop=early_stop,
@@ -288,6 +347,16 @@ def run_parallel_agents(
     max_semantic = semantic_store_max_entries or int(store_cfg.get("max_entries", 128))
     sql_cache = SharedSqlResultCache(max_entries=max_entries) if shared_cache else None
     board = SharedDiscoveryBoard(max_fragments=max_fragments) if discovery_board else None
+    # P4 explore suppression rides the cache-aware loop (its hook lives there), so it
+    # only activates with prompt_cache. When off, replica kwargs are unchanged.
+    suppressor = None
+    if explore_suppressor and prompt_cache:
+        from src.coord.explore_suppressor import StructuralExploreSuppressor
+
+        suppressor = StructuralExploreSuppressor(
+            max_suppressions=cfg.explore_suppressor_max_suppressions
+        )
+    supp_kwargs = {"explore_suppressor": suppressor} if suppressor is not None else {}
     store = (
         SharedSemanticStore(
             max_entries=max_semantic,
@@ -300,9 +369,9 @@ def run_parallel_agents(
 
     if n_replicas == 1:
         single_profile = resolve_replica_profile(schedule, agent_idx=0)
-        single = run_agent(
+        single = run_replica_agent(
             task,
-            model_key,
+            replica_model_keys[0],
             cfg,
             policy=trace_policy,
             agent_id="agent_0",
@@ -313,15 +382,17 @@ def run_parallel_agents(
             start_delay_seconds=single_profile.start_delay_seconds,
             start_turn_delay=single_profile.start_turn_delay,
             stagger_poll_seconds=schedule.stagger_poll_seconds,
+            **supp_kwargs,
         )
         redundancy = compute_redundancy([single])
         interactions = compute_interaction_metrics([single])
         return ParallelRunResult(
             question_id=task.question_id,
             db_id=task.db_id,
-            model_key=model_key,
+            model_key=display_model_key,
             policy=policy,
             n_replicas=1,
+            replica_model_keys=replica_model_keys,
             replicas=[single],
             chosen=single,
             redundancy=redundancy,
@@ -334,6 +405,7 @@ def run_parallel_agents(
             discovery_stats=board.stats if board else None,
             semantic_store=semantic_store,
             semantic_stats=store.stats if store else None,
+            prompt_cache=prompt_cache,
             replica_schedule=schedule,
         )
 
@@ -346,23 +418,26 @@ def run_parallel_agents(
             cfg=cfg,
             task=task,
             policy=policy.value,
-            model_key=model_key,
+            model_key=display_model_key,
             n_replicas=n_replicas,
+            replica_model_keys=replica_model_keys,
             early_stop=early_stop,
             shared_cache=shared_cache,
             discovery_board=discovery_board,
             semantic_store=semantic_store,
+            prompt_cache=prompt_cache,
             trace_policy=trace_policy,
             replica_schedule=schedule,
         )
 
     def _run_replica(idx: int) -> tuple[int, AgentRunResult]:
+        replica_key = replica_model_keys[idx]
         profile = resolve_replica_profile(schedule, agent_idx=idx)
         if coord_trace is not None:
-            coord_trace.log_replica_start(profile)
-        result = run_agent(
+            coord_trace.log_replica_start(profile, model_key=replica_key)
+        result = run_replica_agent(
             task,
-            model_key,
+            replica_key,
             cfg,
             policy=trace_policy,
             agent_id=f"agent_{idx}",
@@ -374,6 +449,7 @@ def run_parallel_agents(
             start_delay_seconds=profile.start_delay_seconds,
             start_turn_delay=profile.start_turn_delay,
             stagger_poll_seconds=schedule.stagger_poll_seconds,
+            **supp_kwargs,
         )
         return idx, result
 
@@ -389,7 +465,10 @@ def run_parallel_agents(
             completion_order.append(idx)
             if coord_trace is not None:
                 coord_trace.log_replica_complete(
-                    result, agent_idx=idx, finish_rank=finish_rank
+                    result,
+                    agent_idx=idx,
+                    finish_rank=finish_rank,
+                    model_key=replica_model_keys[idx],
                 )
             finish_rank += 1
 
@@ -427,9 +506,10 @@ def run_parallel_agents(
     return ParallelRunResult(
         question_id=task.question_id,
         db_id=task.db_id,
-        model_key=model_key,
+        model_key=display_model_key,
         policy=policy,
         n_replicas=n_replicas,
+        replica_model_keys=replica_model_keys,
         replicas=filled,
         chosen=chosen,
         redundancy=redundancy,
@@ -445,5 +525,6 @@ def run_parallel_agents(
         discovery_stats=board.stats if board else None,
         semantic_store=semantic_store,
         semantic_stats=store.stats if store else None,
+        prompt_cache=prompt_cache,
         replica_schedule=schedule,
     )

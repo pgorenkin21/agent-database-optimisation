@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Prompt Cost Optimisation — presentation deck</title>
+<style>
+/* ---------------------------------------------------------------------------
+   Deck for OBS capture with a persistent webcam overlay.
+
+   Fixed 1920x1080 stage, scaled to whatever the browser window is, so the
+   layout cannot reflow mid-recording. The bottom-right corner is reserved for
+   the camera on EVERY slide: nothing is ever placed inside --cam. Press g to
+   outline that zone while you position the OBS source, then press it again.
+
+   Deliberately light-only. Every figure is rendered on white, so a dark theme
+   would frame each one in a glowing box. This is a local capture surface, not
+   a web page, so it does not follow the viewer's colour scheme.
+--------------------------------------------------------------------------- */
+:root {
+  --w: 1920px;
+  --h: 1080px;
+  --pad: 80px;
+  /* Camera zone: 480x270 at 48px from each edge, plus clearance. Content stops
+     at --cam-x horizontally and --cam-y vertically. */
+  --cam-x: 1352px;
+  --cam-y: 726px;
+  --cam-w: 480px;
+  --cam-h: 270px;
+  --cam-margin: 48px;
+  /* Usable content width. --cam-x is an absolute x on the stage, but the
+     content boxes start at --pad, so using --cam-x as their max-width ran
+     them --pad past the camera. Subtract it once, here. */
+  --content-w: calc(var(--cam-x) - var(--pad));
+
+  --bg: #fbfaf8;
+  --ink: #14130f;
+  --ink-2: #45433d;
+  --ink-3: #75726a;
+  --rule: #e2e1dd;
+  --gpt: #2a78d6;
+  --gem: #199e70;
+  --ds:  #c98500;
+  --accent: #b3450c;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The stage is always 1920x1080 in its own coordinates; #fit scales it. */
+#fit {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: var(--w); height: var(--h);
+  transform-origin: center center;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  padding: var(--pad);
+  display: none;
+  flex-direction: column;
+}
+.slide.on { display: flex; }
+
+/* --- camera guide ------------------------------------------------------- */
+#camzone {
+  position: absolute;
+  right: var(--cam-margin);
+  bottom: var(--cam-margin);
+  width: var(--cam-w);
+  height: var(--cam-h);
+  border: 3px dashed rgba(179, 69, 12, .85);
+  border-radius: 6px;
+  display: none;
+  z-index: 50;
+  pointer-events: none;
+}
+#camzone::after {
+  content: "camera 480 × 270";
+  position: absolute;
+  left: 0; top: -34px;
+  font-size: 20px;
+  letter-spacing: .02em;
+  color: var(--accent);
+}
+body.guides #camzone { display: block; }
+
+/* --- shared furniture ---------------------------------------------------- */
+.eyebrow {
+  font-size: 24px;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 14px;
+}
+h1 {
+  font-size: 76px;
+  line-height: 1.08;
+  letter-spacing: -.018em;
+  font-weight: 700;
+  max-width: 1500px;
+}
+h2 {
+  font-size: 54px;
+  line-height: 1.12;
+  letter-spacing: -.015em;
+  font-weight: 700;
+  max-width: 1240px;
+}
+.sub {
+  font-size: 32px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  max-width: 1180px;
+}
+.rule {
+  height: 3px;
+  background: var(--ink);
+  width: 132px;
+  margin: 26px 0 30px;
+}
+
+/* Figure slide: heading across the top, chart on the left, one takeaway in the
+   right column above the camera. */
+.body {
+  display: grid;
+  grid-template-columns: 1fr 470px;
+  gap: 48px;
+  flex: 1;
+  min-height: 0;
+  margin-top: 26px;
+}
+/* No takeaway column: the figure takes the full width up to the camera zone.
+   It still cannot cross --cam-x, because its lower half sits below --cam-y. */
+.body.wide { grid-template-columns: 1fr; max-width: var(--content-w); }
+.fig {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+.fig img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.aside {
+  /* Stops above the camera zone. 726 - 80(pad) - ~150(heading block) leaves
+     room for three or four short lines and no more, which is the right budget
+     for a spoken takeaway. */
+  max-height: 400px;
+  font-size: 29px;
+  line-height: 1.42;
+  color: var(--ink-2);
+}
+.aside strong { color: var(--ink); font-weight: 700; }
+.aside .big {
+  display: block;
+  font-size: 56px;
+  line-height: 1.05;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -.02em;
+  margin-bottom: 16px;
+}
+
+/* Text slides keep everything left of the camera column. */
+.cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 44px;
+  margin-top: 40px;
+  max-width: var(--content-w);
+}
+.card { border-top: 4px solid var(--rule); padding-top: 22px; }
+.card h3 { font-size: 33px; line-height: 1.2; margin-bottom: 14px; font-weight: 700; }
+.card p { font-size: 25px; line-height: 1.44; color: var(--ink-2); }
+.card.m1 { border-top-color: var(--gpt); }
+.card.m2 { border-top-color: var(--gem); }
+.card.m3 { border-top-color: var(--ds); }
+
+ul.points {
+  list-style: none;
+  margin-top: 34px;
+  max-width: 1240px;
+}
+ul.points li {
+  font-size: 33px;
+  line-height: 1.4;
+  color: var(--ink-2);
+  padding-left: 46px;
+  position: relative;
+  margin-bottom: 30px;
+}
+ul.points li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 17px;
+  width: 22px; height: 4px;
+  background: var(--ink-3);
+}
+ul.points li strong { color: var(--ink); font-weight: 700; }
+
+.eq {
+  font-size: 60px;
+  letter-spacing: .005em;
+  margin: 8px 0 6px;
+  font-weight: 400;
+}
+.eq em { font-style: italic; }
+.eq .hl { color: var(--accent); font-weight: 700; }
+/* The combining macron in "H-bar" collides with the next glyph at display
+   sizes. border-top was worse: on an inline span inside a wrapped heading it
+   draws against the line box, not the glyph, and lands over the wrong word.
+   text-decoration tracks the glyph itself, which is what a macron needs. */
+.bar {
+  text-decoration: overline;
+  text-decoration-thickness: 0.055em;
+  text-underline-offset: 0;
+}
+
+/* The message-list exhibit, Fig. 2 of the paper, rebuilt as live text so it
+   stays crisp instead of being a screenshot of a screenshot. */
+.zones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 54px;
+  margin-top: 34px;
+  max-width: var(--content-w);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 25px;
+  line-height: 1.62;
+}
+.zones h4 {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 30px;
+  margin-bottom: 16px;
+}
+.zones .note { color: var(--accent); font-style: italic; }
+.zones .ok { color: var(--gem); font-style: italic; }
+.zones .frozen { background: #eeece7; border-radius: 4px; padding: 1px 7px; }
+.zones .ev { color: var(--ink-3); }
+.zones .hl2 { color: var(--accent); }
+.card code {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: .88em;
+  background: #eeece7;
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+/* The agent loop, drawn in boxes rather than as an image so it stays crisp and
+   the arrows never fall out of step with the text. */
+.loop {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1.35fr;
+  align-items: stretch;
+  gap: 20px;
+  margin-top: 30px;
+  max-width: var(--content-w);
+}
+.step {
+  border: 2px solid var(--rule);
+  border-radius: 8px;
+  padding: 18px 20px 20px;
+  position: relative;
+}
+.step .n {
+  position: absolute; top: -15px; left: 18px;
+  background: var(--bg);
+  padding: 0 8px;
+  font-size: 20px;
+  color: var(--ink-3);
+}
+.step h4 { font-size: 29px; margin-bottom: 10px; font-weight: 700; }
+.step p { font-size: 23px; line-height: 1.38; color: var(--ink-2); }
+.step p + p { margin-top: 10px; }
+.arrow { align-self: center; font-size: 38px; color: var(--ink-3); }
+.step code { font-family: ui-monospace, Menlo, monospace; font-size: .92em; }
+.step code.ex { color: var(--gpt); }
+.step code.sub { color: var(--accent); }
+.loopback {
+  max-width: var(--content-w);
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 2px dashed var(--rule);
+  font-size: 24px;
+  color: var(--ink-3);
+  font-style: italic;
+  text-align: center;
+}
+.demo-note {
+  margin-top: 44px;
+  font-size: 30px;
+  color: var(--ink-3);
+  max-width: 1100px;
+  line-height: 1.45;
+}
+kbd {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: .82em;
+  background: #eeece7;
+  border-radius: 4px;
+  padding: 3px 9px;
+}
+
+.byline { margin-top: auto; font-size: 30px; color: var(--ink-2); line-height: 1.45; }
+.byline strong { color: var(--ink); }
+
+/* --- chrome -------------------------------------------------------------- */
+#counter {
+  position: absolute;
+  left: var(--pad);
+  bottom: 34px;
+  font-size: 20px;
+  color: var(--ink-3);
+  letter-spacing: .04em;
+  z-index: 40;
+}
+#notes {
+  position: absolute;
+  left: var(--pad);
+  right: calc(var(--cam-margin) + var(--cam-w) + 40px);
+  bottom: 74px;
+  font-size: 22px;
+  line-height: 1.4;
+  color: var(--accent);
+  background: rgba(251, 250, 248, .96);
+  border-left: 4px solid var(--accent);
+  padding: 14px 18px;
+  display: none;
+  z-index: 45;
+}
+body.notes #notes { display: block; }
+</style>
+</head>
+<body>
+
+<div id="fit">
+  <div id="camzone"></div>
+  <div id="counter"></div>
+  <div id="notes"></div>
+
+  <!-- 1 ------------------------------------------------------------------- -->
+  <section class="slide" data-notes="0:00–0:40 · on camera, settle before speaking. Do not rush this one.">
+    <div class="eyebrow">MSc Project 2025/26 · Queen Mary University of London</div>
+    <h1>Prompt Cost Optimisation for<br>Speculative Parallelism in Text-to-SQL</h1>
+    <div class="rule"></div>
+    <div class="sub">Schema pruning, a semantic fact store, and cache-stable
+      structure.</div>
+    <div class="byline">
+      <strong>Name: Pavel Gorenkin. Student ID: F133092. Supervisor: Dr Ahmed M. A. Sayed </strong><br>
+      School of Electronic Engineering and Computer Science
+    </div>
+  </section>
+
+  <!-- 2 ------------------------------------------------------------------- -->
+  <section class="slide" data-notes="Ground the audience before any numbers. Walk the loop left to right once, then move on.">
+    <h2>The Agent Loop.</h2>
+    <div class="loop">
+      <div class="step">
+        <span class="n">1</span>
+        <h4>Prompt</h4>
+        <p>System instructions, the database schema, the question and its evidence.</p>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="step">
+        <span class="n">2</span>
+        <h4>Model turn</h4>
+        <p>Reason, then call one of two tools.</p>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="step tools">
+        <span class="n">3</span>
+        <h4>Tool</h4>
+        <p><code class="ex">execute_sql</code> runs an exploratory probe and its
+          result is appended to the conversation.</p>
+        <p><code class="sub">submit_sql</code> ends the episode with the final query.</p>
+      </div>
+    </div>
+    <div class="loopback">turns 1 to 15, and the whole conversation is re-sent every turn</div>
+    <div class="cols" style="margin-top:30px">
+      <div class="card m1">
+        <h3>Replicas</h3>
+        <p><em>N</em> agents run the same task on identical inputs at temperature
+          zero, differing only in sampling.</p>
+      </div>
+      <div class="card m2">
+        <h3>Selection</h3>
+        <p><code>best_of_n</code> takes the replica reaching an executable
+          submission in the fewest turns.</p>
+      </div>
+      <div class="card m3">
+        <h3>Scoring</h3>
+        <p>Execution accuracy: the submitted query must return the same rows as
+          the gold query.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 ------------------------------------------------------------------- -->
+  <section class="slide" data-notes="0:40–1:50 · Let the chart land before talking. Cost line first, then accuracy.">
+    <h2>The Problem.</h2>
+    <div class="body">
+      <div class="fig"><img src="../figures/slides/fig6_scaling.png"
+           alt="Token cost and execution accuracy against replica count"></div>
+      <div class="aside">
+        <span class="big">27–37×</span>
+        cost at <em>N</em> = 25, against <strong>at most 8 points</strong> of accuracy
+        across the whole range, which is inside the noise of a 50-task subset.
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 ------------------------------------------------------------------- -->
+  <section class="slide" data-notes="Backup slide. Skip if segment 2 is running long.">
+    <h2>Replicas duplicate most of their exploration.</h2>
+    <div class="body">
+      <div class="fig"><img src="../figures/slides/fig7_redundancy.png"
+           alt="Duplicated exploratory SQL against replica count"></div>
+      <div class="aside">
+        <span class="big">181×</span>
+        the same statement on one question at twenty-five replicas, roughly seven
+        times per replica.
+        <br><br>
+        Across the subset, <strong>82 explore queries per task collapse to 16
+        distinct</strong>.
+        <br><br>
+        A shared cache removes most of that and barely touches the bill.
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 ------------------------------------------------------------------- -->
+  <section class="slide" data-notes="1:50–2:40 · Point at each term as you name the method it belongs to.">
+    <h2>Chat APIs are stateless, so every turn re-sends the whole prompt.</h2>
+    <div class="eq" style="margin-top:26px">
+      billed input &nbsp;≈&nbsp; <span class="hl">N</span> × <span class="hl">T</span>
+      × price(<span class="hl">P</span> + <span class="bar"><em>H</em></span>)
+    </div>
+    <div class="sub" style="font-size:28px; margin-top:6px">
+      replicas × turns × the price of a static prefix plus an accumulated history.
+      Three factors, so three methods, and the set is complete over the identity.
+    </div>
+    <div class="body wide" style="margin-top:14px">
+      <div class="fig"><img src="../figures/slides/fig1_anatomy.png"
+           alt="Anatomy of one replica's prompt, with each method pointing at the term it attacks"></div>
+    </div>
+  </section>
+
+  <!-- 6 ------------------------------------------------------------------- -->
+  <section class="slide" data-notes="2:40–4:30 covers slides 5–7. Densest part of the talk: slow down.">
+    <h2>Three Methods.</h2>
+    <div class="cols">
+      <div class="card m1">
+        <h3>Schema pruning<br>sends a smaller schema</h3>
+        <p>Hybrid keyword and TF-IDF scoring over per-table descriptions,
+          expanded along foreign keys. Always falls back to the full schema at
+          execution time, because a dropped table costs more than it saves.</p>
+      </div>
+      <div class="card m2">
+        <h3>Fact store<br>trades history for turns</h3>
+        <p>Rule-based summary after every probe, so no model calls and no
+          extra cost. Facts are shared across the replicas of one task and
+          ranked by how many found them independently. Advisory only.</p>
+      </div>
+      <div class="card m3">
+        <h3>Cache-stable structure<br>reprices the same bytes</h3>
+        <p>Providers discount input only if the prefix is
+          byte-identical and the prompt grows by appending, and the baseline
+          loop violated both.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 ------------------------------------------------------------------- -->
+  <section class="slide" data-notes="Every number in the paper comes from these files. Say that plainly, it is the reproducibility answer.">
+    <h2>Every run writes one append-only JSONL file per replica.</h2>
+    <div class="zones" style="grid-template-columns:1fr; font-size:23px; margin-top:30px">
+      <div>
+        <span class="ev">{"event":</span> "run_start", "run_id": "4ec9cc", "question_id": 1472, …}<br>
+        <span class="ev">{"event":</span> "llm_turn", "turn_idx": 0, "prompt_tokens": 4187,<br>
+        &nbsp;&nbsp;"completion_tokens": 62, "cached_prompt_tokens": 2176}<br>
+        <span class="ev">{"event":</span> "sql_execute", "turn_idx": 0, <span class="hl2">"sql_role": "explore"</span>,<br>
+        &nbsp;&nbsp;"sql_raw": "SELECT DISTINCT country FROM gasstations",<br>
+        &nbsp;&nbsp;"exec_status": "ok", "row_count": 4, "latency_ms": 3}<br>
+        <span class="ev">{"event":</span> "sql_execute", "turn_idx": 3, <span class="hl2">"sql_role": "submit"</span>, …}<br>
+        <span class="ev">{"event":</span> "run_end", "ex_correct": 1, "total_prompt_tokens": 21044, …}
+      </div>
+    </div>
+    <div class="cols" style="margin-top:34px">
+      <div class="card m1">
+        <h3>Cost</h3>
+        <p><code>llm_turn</code> carries prompt, completion and cached token counts
+          per turn, which is where both ledgers come from.</p>
+      </div>
+      <div class="card m2">
+        <h3>Behaviour</h3>
+        <p><code>sql_execute</code> tags every query explore or submit, which is
+          what makes duplication and probe counts measurable.</p>
+      </div>
+      <div class="card m3">
+        <h3>Reproducibility</h3>
+        <p>Nothing is aggregated at write time, so every table and figure is a
+          script over these files and re-derives on demand.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 ------------------------------------------------------------------- -->
+  <section class="slide" data-notes="4:30–5:50 · Switch to the OBS terminal scene now. Come back to slide 8 after.">
+    <h2>Demo.</h2>
+    <div class="zones" style="grid-template-columns:1fr; font-size:26px; margin-top:40px">
+      <div>uv run python scripts/run_parallel_batch.py \<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;--subset-file configs/subsets/demo_one_task.txt \<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;--replicas 5 --model gpt-4o-mini \<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;--schema-pruning --schema-pruning-mode hybrid \<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;--semantic-store --prompt-cache</div>
+    </div>
+    <div class="demo-note">Question 937, <code>formula_1</code>. Schema 11,847
+      characters down to 6,354, five replicas, cached share above 92% from the
+      first turn, all five correct.</div>
+  </section>
+
+  <!-- 9 ------------------------------------------------------------------- -->
+  <section class="slide" data-notes="5:50 · Results beat 1. The small saving bar beside the huge cost bar is the point.">
+    <div class="eyebrow">Result 1 of 4</div>
+    <h2>Pruning works when correct tables recalled.</h2>
+    <div class="body">
+      <div class="fig"><img src="../figures/slides/fig8_recall_split.png"
+           alt="Pruning's raw-token effect split by whether every gold table survived"></div>
+      <div class="aside">
+        <strong>−10 to −20%</strong> where every gold table survives, on every
+        model, all six intervals excluding zero.
+        <br><br>
+        <strong>+32 to +156%</strong> where one is missing.
+        <br><br>
+        At 89.6% recall the two nearly cancel. Which regime a task falls in is
+        knowable <strong>before any model is called</strong>.
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 ------------------------------------------------------------------ -->
+  <section class="slide" data-notes="Result 2. The honest negative. Point at the two DeepSeek lines crossing zero.">
+    <div class="eyebrow">Result 2 of 4</div>
+    <h2>The fact store has no reliable sign.</h2>
+    <div class="body">
+      <div class="fig"><img src="../figures/slides/fig10_factstore.png"
+           alt="Fact store token change and injection load, 50-task against 500-task"></div>
+      <div class="aside">
+        On 50 tasks it saves 17% on one model and costs 20% on another. At full
+        scale <strong>the DeepSeek sign reverses</strong>.
+        <br><br>
+        The injection load barely moves between scales, so the tax
+        <strong>bounds the saving without predicting it</strong>.
+        <br><br>
+        Accuracy improves nowhere, and on DeepSeek at 500 tasks it drops 3.5 points.
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 ------------------------------------------------------------------ -->
+  <section class="slide" data-notes="Result 3, first half. The mechanism working.">
+    <div class="eyebrow">Result 3 of 4</div>
+    <h2>Prompt cache works across all testing.</h2>
+    <div class="body">
+      <div class="fig"><img src="../figures/slides/fig2_cached_by_turn.png"
+           alt="Cached share of input by turn index for three models"></div>
+      <div class="aside">
+        No content bytes change. Raw consumption is statistically unmoved
+        in <strong>fourteen of fifteen</strong> configurations, and billed input
+        still falls <strong>18.8 to 86.0%</strong> in all fifteen.
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 ------------------------------------------------------------------ -->
+  <section class="slide" data-notes="Result 4, the most interesting one. Pause after 'delete it'.">
+    <div class="eyebrow">Result 4 of 4</div>
+    <h2>The stack beats the sum of its parts.</h2>
+    <div class="body">
+      <div class="fig"><img src="../figures/slides/fig5_additivity.png"
+           alt="Measured composed saving against the prediction from the isolated arms"></div>
+      <div class="aside">
+  
+        Composed, <strong>eleven of fifteen</strong> configurations save more
+        than their parts predict. On one, the parts predict <strong>+8.3%</strong>
+        and the stack delivers <strong>−23.8%</strong>.
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 ------------------------------------------------------------------ -->
+  <section class="slide" data-notes="9:10–10:00 · Land it, hold a beat, then stop the recording. Do not trail off.">
+    <div class="eyebrow">Summary</div>
+    <ul class="points">
+      <li><strong>Prompt Caching is unconditional</strong> and the largest effect measured.</li>
+      <li><strong>Schema Pruning is conditional on recall of correct tables</strong>, and the condition is
+        decidable offline.</li>
+      <li><strong>Semantic Fact Store works on certain models and at certain scales but is insconsistent,</strong>.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+(function () {
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const counter = document.getElementById('counter');
+  const notes = document.getElementById('notes');
+  const fit = document.getElementById('fit');
+  const W = 1920, H = 1080;
+  let i = 0;
+
+  // Scale the fixed stage into whatever window OBS is capturing, so a
+  // mis-sized browser window shrinks the deck rather than reflowing it.
+  function resize() {
+    const s = Math.min(window.innerWidth / W, window.innerHeight / H);
+    fit.style.transform = `translate(-50%, -50%) scale(${s})`;
+  }
+
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('on', k === i));
+    counter.textContent = `${i + 1} / ${slides.length}`;
+    notes.textContent = slides[i].dataset.notes || '';
+    // Keep the position across a reload, so an accidental refresh mid-record
+    // does not drop you back to the title.
+    try { localStorage.setItem('deck-v9', String(i)); } catch (e) { /* file:// */ }
+  }
+
+  addEventListener('keydown', (e) => {
+    const k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ' || k === 'Enter') { show(i + 1); e.preventDefault(); }
+    else if (k === 'ArrowLeft' || k === 'PageUp' || k === 'Backspace') { show(i - 1); e.preventDefault(); }
+    else if (k === 'Home') show(0);
+    else if (k === 'End') show(slides.length - 1);
+    else if (k === 'g' || k === 'G') document.body.classList.toggle('guides');
+    else if (k === 'n' || k === 'N') document.body.classList.toggle('notes');
+    else if (k === 'f' || k === 'F') document.documentElement.requestFullscreen?.();
+  });
+
+  // Clicking advances, so a presenter remote mapped to a mouse button works.
+  addEventListener('click', (e) => { if (!e.target.closest('a')) show(i + 1); });
+
+  addEventListener('resize', resize);
+  resize();
+  // ?s=8 opens straight at that slide. Handy for jumping back into a rehearsal
+  // and for screenshotting a single slide from the command line.
+  let start = 0;
+  const params = new URLSearchParams(location.search);
+  if (params.get('guides')) document.body.classList.add('guides');
+  const asked = params.get('s');
+  if (asked !== null) {
+    start = (parseInt(asked, 10) || 1) - 1;
+  } else {
+    try { start = parseInt(localStorage.getItem('deck-v9') || '0', 10) || 0; } catch (e) { /* file:// */ }
+  }
+  show(start);
+})();
+</script>
+</body>
+</html>

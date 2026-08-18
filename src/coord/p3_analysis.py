@@ -15,6 +15,7 @@ from src.coord.early_stop_analysis import (
 
 P3_BATCH_IDS: dict[int, str] = {
     10: "semantic_hybrid_r10_bo",
+    25: "semantic_hybrid_r25_bo",
 }
 
 P2P3_BATCH_IDS: dict[int, str] = {

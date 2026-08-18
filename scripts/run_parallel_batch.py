@@ -20,8 +20,9 @@ from src.bird.subset import resolve_task_subset
 from src.config import load_config, validate_paths
 from src.coord.baseline_analysis import batch_ex_accuracy_stats
 from src.coord.interaction_metrics import batch_interaction_summary
-from src.coord.parallel import run_parallel_agents
+from src.coord.parallel import ensemble_model_label, run_parallel_agents
 from src.coord.replica_schedule import (
+    ReplicaScheduleConfig,
     add_replica_schedule_arguments,
     schedule_batch_tag_suffix,
     schedule_from_args,
@@ -34,6 +35,13 @@ from src.llm.models import load_model_registry
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", type=str, default=None)
+    parser.add_argument(
+        "--models",
+        type=str,
+        nargs="+",
+        default=None,
+        help="One model per replica (heterogeneous ensemble); overrides --model and --replicas",
+    )
     parser.add_argument("--config", type=Path, default=None)
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--subset-file", type=Path, default=None)
@@ -66,9 +74,25 @@ def main() -> int:
         help="Enable P3 shared semantic fact store (bounded prompt injection)",
     )
     parser.add_argument(
+        "--prompt-cache",
+        action="store_true",
+        help="Enable prompt-cache loop (Zone-1-frozen prompt + cached-token attribution)",
+    )
+    parser.add_argument(
         "--schema-pruning",
         action="store_true",
         help="Prune schema context to question/evidence-matched tables (+ FK neighbors)",
+    )
+    parser.add_argument(
+        "--db-profile",
+        action="store_true",
+        help="Attach persistent per-database profile card to the schema prefix "
+        "(Chapter 12; requires --prompt-cache). Build with scripts/build_db_profile.py",
+    )
+    parser.add_argument(
+        "--explore-suppressor",
+        action="store_true",
+        help="Enable P4 structural explore suppression (Chapter 13; requires --prompt-cache)",
     )
     parser.add_argument(
         "--schema-pruning-mode",
@@ -96,7 +120,49 @@ def main() -> int:
         cfg.raw["schema_pruning"] = True
     if args.schema_pruning_mode:
         cfg.raw["schema_pruning_mode"] = args.schema_pruning_mode
-    model_key = args.model or cfg.default_model_key
+    if args.db_profile:
+        if not args.prompt_cache:
+            print(
+                "ERROR: --db-profile requires --prompt-cache (the profile card is "
+                "injected by the cache-optimised loop).",
+                file=sys.stderr,
+            )
+            return 1
+        cfg.raw["db_profile"] = True
+    if args.explore_suppressor and not args.prompt_cache:
+        print(
+            "ERROR: --explore-suppressor requires --prompt-cache (the P4 hook lives "
+            "in the cache-optimised loop).",
+            file=sys.stderr,
+        )
+        return 1
+    if args.models and args.model:
+        print("ERROR: use either --model or --models, not both.", file=sys.stderr)
+        return 1
+
+    registry = load_model_registry(cfg.models_config_path)
+    replica_model_keys: list[str] | None = None
+    if args.models:
+        replica_model_keys = []
+        for raw_key in args.models:
+            spec = registry.get(raw_key)
+            replica_model_keys.append(spec.key)
+            ok, msg = api_key_status(spec)
+            if not ok and not args.dry_run:
+                print(f"API key missing for {spec.key}: {msg}", file=sys.stderr)
+                return 1
+        model_key = ensemble_model_label(replica_model_keys)
+        n_replicas = len(replica_model_keys)
+    else:
+        model_key = args.model or cfg.default_model_key
+        spec = registry.get(model_key)
+        model_key = spec.key
+        ok, msg = api_key_status(spec)
+        if not ok and not args.dry_run:
+            print(f"API key missing for {model_key}: {msg}", file=sys.stderr)
+            return 1
+        n_replicas = args.replicas
+
     policy = policy_from_str(args.policy)
     schedule = schedule_from_args(args, cfg)
 
@@ -104,14 +170,6 @@ def main() -> int:
     if warnings:
         for w in warnings:
             print(f"WARN: {w}", file=sys.stderr)
-        return 1
-
-    registry = load_model_registry(cfg.models_config_path)
-    spec = registry.get(model_key)
-    model_key = spec.key
-    ok, msg = api_key_status(spec)
-    if not ok and not args.dry_run:
-        print(f"API key missing for {model_key}: {msg}", file=sys.stderr)
         return 1
 
     tasks = resolve_task_subset(cfg, limit=args.limit, subset_file=args.subset_file)
@@ -128,17 +186,26 @@ def main() -> int:
     batch_id = args.batch_id or (
         datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S") + "_" + uuid.uuid4().hex[:6]
     )
-    tag = f"{model_key}_r{args.replicas}_{policy.value}"
+    if replica_model_keys:
+        tag = f"ensemble_r{n_replicas}_{policy.value}"
+    else:
+        tag = f"{model_key}_r{n_replicas}_{policy.value}"
     if args.shared_cache:
         tag += "_p1_cache"
     if args.discovery_board:
         tag += "_p2_discovery"
     if args.semantic_store:
         tag += "_p3_semantic"
+    if args.prompt_cache:
+        tag += "_promptcache"
     if args.early_stop:
         tag += "_early_stop"
     if args.schema_pruning or cfg.schema_pruning:
         tag += "_schema_prune"
+    if args.db_profile or cfg.db_profile:
+        tag += "_dbprofile"
+    if args.explore_suppressor:
+        tag += "_p4suppress"
     tag += schedule_batch_tag_suffix(schedule)
     out_dir = args.output_dir or (cfg.runs_dir / "batches")
     csv_path = out_dir / f"parallel_{batch_id}_{tag}.csv"
@@ -146,14 +213,40 @@ def main() -> int:
 
     print(f"batch_id:     {batch_id}")
     print(f"model:        {model_key}")
-    print(f"replicas:     {args.replicas}")
+    if replica_model_keys:
+        print(f"replicas:     {n_replicas} (one per model: {', '.join(replica_model_keys)})")
+    else:
+        print(f"replicas:     {n_replicas}")
     print(f"policy:       {policy.value}")
-    print(f"early_stop:   {args.early_stop}")
-    print(f"shared_cache: {args.shared_cache}")
-    print(f"discovery:    {args.discovery_board}")
-    print(f"semantic:     {args.semantic_store}")
-    print(f"schema_prune: {args.schema_pruning or cfg.schema_pruning} ({cfg.schema_pruning_mode})")
-    print(f"schedule:     {schedule.to_dict()}")
+
+    # Only the three prompt-layer methods the paper evaluates are listed on
+    # every run. The execution-layer policies and the other legacy switches were
+    # cut from the study, and printing them as "False" on every line advertises
+    # machinery no result depends on. They still print when actually enabled,
+    # since silently hiding an active policy would be far worse than noise.
+    print("methods:")
+    for label, on, extra in (
+        ("schema pruning", args.schema_pruning or cfg.schema_pruning,
+         f" ({cfg.schema_pruning_mode})"),
+        ("semantic fact store", args.semantic_store, ""),
+        ("prompt cache", args.prompt_cache, ""),
+    ):
+        print(f"  {label:<21} {('on' + extra) if on else 'off'}")
+    for label, on in (
+        ("early stop", args.early_stop),
+        ("shared SQL cache", args.shared_cache),
+        ("discovery board", args.discovery_board),
+        ("db profile card", args.db_profile or cfg.db_profile),
+        ("explore suppressor", args.explore_suppressor),
+    ):
+        if on:
+            print(f"  {label:<21} ON   [cut from the study; not part of any reported result]")
+
+    # Same rule for the replica schedule: silent at its defaults, loud when set.
+    sched = schedule.to_dict()
+    if sched != ReplicaScheduleConfig().to_dict():
+        print(f"  schedule              {sched}")
+
     print(f"tasks:        {len(tasks)}")
     print(f"output:       {json_path}")
 
@@ -170,14 +263,15 @@ def main() -> int:
             time.sleep(inter_task_delay)
         print(
             f"\n[{i + 1}/{len(tasks)}] question_id={task.question_id} "
-            f"({task.difficulty}) x{args.replicas} ...",
+            f"({task.difficulty}) x{n_replicas} ...",
             flush=True,
         )
         try:
             result = run_parallel_agents(
                 task,
-                model_key,
-                n_replicas=args.replicas,
+                model_key=None if replica_model_keys else model_key,
+                model_keys=replica_model_keys,
+                n_replicas=n_replicas,
                 policy=policy,
                 cfg=cfg,
                 max_workers=args.max_workers,
@@ -185,6 +279,8 @@ def main() -> int:
                 shared_cache=args.shared_cache,
                 discovery_board=args.discovery_board,
                 semantic_store=args.semantic_store,
+                prompt_cache=args.prompt_cache,
+                explore_suppressor=args.explore_suppressor,
                 replica_schedule=schedule,
             )
             chosen = result.chosen
@@ -199,13 +295,18 @@ def main() -> int:
                     "db_id": task.db_id,
                     "difficulty": task.difficulty,
                     "model_key": model_key,
+                    "replica_model_keys": ",".join(result.replica_model_keys),
+                    "chosen_model_key": chosen.model_key if chosen else "",
                     "policy": policy.value,
-                    "n_replicas": args.replicas,
+                    "n_replicas": n_replicas,
                     "ex_correct": result.ex_correct,
                     "replicas_ex_correct": red.replicas_ex_correct if red else 0,
                     "chosen_turns": chosen.turns if chosen else 0,
                     "total_prompt_tokens": red.total_prompt_tokens if red else 0,
                     "total_completion_tokens": red.total_completion_tokens if red else 0,
+                    "total_cached_prompt_tokens": red.total_cached_prompt_tokens if red else 0,
+                    "cached_prompt_pct": round(red.cached_prompt_pct, 2) if red else 0.0,
+                    "prompt_cache": args.prompt_cache,
                     "token_overhead_ratio": red.token_overhead_ratio if red else None,
                     "explore_redundancy_pct": red.explore_redundancy_pct if red else 0,
                     "early_stop": args.early_stop,
@@ -243,7 +344,7 @@ def main() -> int:
             )
             status = "EX=1" if result.ex_correct else "EX=0"
             rep_ok = red.replicas_ex_correct if red else 0
-            print(f"  -> {status} ({rep_ok}/{args.replicas} replicas correct)")
+            print(f"  -> {status} ({rep_ok}/{n_replicas} replicas correct)")
             if result.ex_correct == 0:
                 failures += 1
         except Exception as e:
@@ -254,13 +355,18 @@ def main() -> int:
                     "db_id": task.db_id,
                     "difficulty": task.difficulty,
                     "model_key": model_key,
+                    "replica_model_keys": ",".join(replica_model_keys or [model_key] * n_replicas),
+                    "chosen_model_key": "",
                     "policy": policy.value,
-                    "n_replicas": args.replicas,
+                    "n_replicas": n_replicas,
                     "ex_correct": 0,
                     "replicas_ex_correct": 0,
                     "chosen_turns": 0,
                     "total_prompt_tokens": 0,
                     "total_completion_tokens": 0,
+                    "total_cached_prompt_tokens": 0,
+                    "cached_prompt_pct": 0.0,
+                    "prompt_cache": args.prompt_cache,
                     "token_overhead_ratio": 0,
                     "explore_redundancy_pct": 0,
                     "early_stop": args.early_stop,
@@ -300,15 +406,32 @@ def main() -> int:
     payload = {
         "batch_id": batch_id,
         "model_key": model_key,
+        "replica_model_keys": replica_model_keys or [model_key] * n_replicas,
         "bird_split": cfg.bird_split,
         "policy": policy.value,
-        "n_replicas": args.replicas,
+        "n_replicas": n_replicas,
         "early_stop": args.early_stop,
         "shared_cache": args.shared_cache,
         "discovery_board": args.discovery_board,
         "semantic_store": args.semantic_store,
+        "prompt_cache": args.prompt_cache,
+        "total_prompt_tokens": sum(r["total_prompt_tokens"] for r in rows),
+        "total_completion_tokens": sum(r["total_completion_tokens"] for r in rows),
+        "total_cached_prompt_tokens": sum(r["total_cached_prompt_tokens"] for r in rows),
+        "batch_cached_prompt_pct": (
+            round(
+                100.0
+                * sum(r["total_cached_prompt_tokens"] for r in rows)
+                / sum(r["total_prompt_tokens"] for r in rows),
+                2,
+            )
+            if sum(r["total_prompt_tokens"] for r in rows) > 0
+            else 0.0
+        ),
         "schema_pruning": bool(args.schema_pruning or cfg.schema_pruning),
         "schema_pruning_mode": cfg.schema_pruning_mode,
+        "db_profile": bool(args.db_profile or cfg.db_profile),
+        "explore_suppressor": bool(args.explore_suppressor),
         "replica_schedule": schedule.to_dict(),
         "task_count": len(tasks),
         "ex_accuracy_pct": ex_pct,
@@ -361,9 +484,18 @@ def main() -> int:
     print(f"  EX:         {ex_pct:.1f}%")
     if ex_stats["api_failure_count"]:
         ex_excl = ex_stats["ex_accuracy_excluding_api_errors_pct"]
-        print(f"  EX (no API fail): {ex_excl:.1f}%  ({ex_stats['api_failure_count']} API failures)")
+        if ex_excl is None:
+            print(f"  EX (no API fail): n/a  ({ex_stats['api_failure_count']} API failures)")
+        else:
+            print(f"  EX (no API fail): {ex_excl:.1f}%  ({ex_stats['api_failure_count']} API failures)")
     print(f"  Avg overhead ratio: {payload['avg_token_overhead_ratio']}")
     print(f"  Avg explore redundancy: {payload['avg_explore_redundancy_pct']}%")
+    if args.prompt_cache:
+        print(
+            f"  Prompt cache: {payload['total_cached_prompt_tokens']:,} / "
+            f"{payload['total_prompt_tokens']:,} input tokens cached "
+            f"({payload['batch_cached_prompt_pct']}%)"
+        )
     print(f"\nWrote {json_path}")
     print(f"Wrote {csv_path}")
 

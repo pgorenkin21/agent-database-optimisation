@@ -21,6 +21,9 @@ class ModelSpec:
     api_model: str
     api_key_env: str
     base_url: str | None = None
+    price_per_1m_input: float | None = None
+    price_per_1m_output: float | None = None
+    price_per_1m_cached_input: float | None = None
 
     def is_openai_compatible(self) -> bool:
         return self.provider in ("openai", "deepseek")
@@ -72,4 +75,11 @@ def _parse_spec(key: str, spec: dict[str, Any]) -> ModelSpec:
         api_model=str(spec["api_model"]),
         api_key_env=str(spec["api_key_env"]),
         base_url=str(spec["base_url"]) if spec.get("base_url") else None,
+        price_per_1m_input=_optional_float(spec.get("price_per_1m_input")),
+        price_per_1m_output=_optional_float(spec.get("price_per_1m_output")),
+        price_per_1m_cached_input=_optional_float(spec.get("price_per_1m_cached_input")),
     )
+
+
+def _optional_float(value: Any) -> float | None:
+    return float(value) if value is not None else None

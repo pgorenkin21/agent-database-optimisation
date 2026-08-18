@@ -13,6 +13,7 @@ from typing import Any
 from src.coord.redundancy import compute_redundancy, explore_sql_from_trace
 from src.db.sql_fragments import extract_sql_fragments
 from src.db.sql_normalize import normalize_sql_ast, normalize_sql_string
+from src.llm.cost import batch_cost_usd
 from src.logging.trace import read_trace_events
 
 
@@ -81,6 +82,9 @@ class TaskBaselineMetrics:
     token_overhead_ratio: float | None
     ex_correct: int
     replicas_ex_correct: int
+    total_prompt_tokens: int = 0
+    total_completion_tokens: int = 0
+    total_cached_prompt_tokens: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -101,6 +105,9 @@ class TaskBaselineMetrics:
             "time_to_first_success_ms": self.time_to_first_success_ms,
             "min_replica_wall_ms": self.min_replica_wall_ms,
             "total_tokens": self.total_tokens,
+            "total_prompt_tokens": self.total_prompt_tokens,
+            "total_completion_tokens": self.total_completion_tokens,
+            "total_cached_prompt_tokens": self.total_cached_prompt_tokens,
             "token_overhead_ratio": round(self.token_overhead_ratio, 3)
             if self.token_overhead_ratio is not None
             else None,
@@ -166,6 +173,14 @@ class BatchBaselineReport:
             "median_wall_clock_ms": round(_median(wall), 1),
             "avg_time_to_first_success_ms": round(_mean(ttf), 1) if ttf else None,
             "total_tokens": sum(t.total_tokens for t in self.tasks),
+            "total_prompt_tokens": sum(t.total_prompt_tokens for t in self.tasks),
+            "total_completion_tokens": sum(t.total_completion_tokens for t in self.tasks),
+            "total_cached_prompt_tokens": sum(
+                t.total_cached_prompt_tokens for t in self.tasks
+            ),
+            "total_cost_usd": batch_cost_usd(
+                [t.to_dict() for t in self.tasks], self.model_key
+            ),
         }
 
     def to_dict(self) -> dict[str, Any]:
@@ -281,9 +296,10 @@ def analyze_coord_trace(
                 break
 
     redundancy = end.get("redundancy", {})
-    total_tokens = int(redundancy.get("total_prompt_tokens", 0)) + int(
-        redundancy.get("total_completion_tokens", 0)
-    )
+    total_prompt_tokens = int(redundancy.get("total_prompt_tokens", 0))
+    total_completion_tokens = int(redundancy.get("total_completion_tokens", 0))
+    total_cached_prompt_tokens = int(redundancy.get("total_cached_prompt_tokens", 0))
+    total_tokens = total_prompt_tokens + total_completion_tokens
     overhead = redundancy.get("token_overhead_ratio")
     token_overhead = float(overhead) if overhead is not None else None
 
@@ -308,6 +324,9 @@ def analyze_coord_trace(
         token_overhead_ratio=token_overhead,
         ex_correct=int(end.get("chosen_ex_correct", 0)),
         replicas_ex_correct=int(redundancy.get("replicas_ex_correct", 0)),
+        total_prompt_tokens=total_prompt_tokens,
+        total_completion_tokens=total_completion_tokens,
+        total_cached_prompt_tokens=total_cached_prompt_tokens,
     )
 
 
@@ -375,11 +394,21 @@ def compare_replica_counts(reports: list[BatchBaselineReport]) -> list[dict[str,
                 "total_sql_queries": agg.get("total_sql_queries"),
                 "total_explore_queries": agg.get("total_explore_queries"),
                 "unique_explore_string": agg.get("unique_explore_string"),
+                "unique_explore_ast": agg.get("unique_explore_ast"),
+                "explore_query_uniqueness_pct": agg.get("explore_query_uniqueness_pct"),
                 "avg_explore_redundancy_pct": agg.get("avg_explore_redundancy_pct"),
+                "median_explore_redundancy_pct": agg.get("median_explore_redundancy_pct"),
                 "avg_subexpr_overlap_pct": agg.get("avg_subexpr_overlap_pct"),
+                "median_subexpr_overlap_pct": agg.get("median_subexpr_overlap_pct"),
                 "avg_token_overhead_ratio": agg.get("avg_token_overhead_ratio"),
                 "avg_wall_clock_ms": agg.get("avg_wall_clock_ms"),
+                "median_wall_clock_ms": agg.get("median_wall_clock_ms"),
+                "avg_time_to_first_success_ms": agg.get("avg_time_to_first_success_ms"),
                 "total_tokens": agg.get("total_tokens"),
+                "total_prompt_tokens": agg.get("total_prompt_tokens"),
+                "total_completion_tokens": agg.get("total_completion_tokens"),
+                "total_cached_prompt_tokens": agg.get("total_cached_prompt_tokens"),
+                "total_cost_usd": agg.get("total_cost_usd"),
             }
         )
     return rows

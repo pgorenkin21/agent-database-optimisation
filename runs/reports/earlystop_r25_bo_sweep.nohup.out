@@ -1,0 +1,18 @@
+=== Early stop r=25 sweep started 2026-06-16T11:25:52Z ===
+
+=== gpt-4o-mini r=25 early-stop 2026-06-16T11:25:52Z ===
+batch_id:     earlystop_r25_bo
+model:        gpt-4o-mini
+replicas:     25
+policy:       best_of_n
+early_stop:   True
+tasks:        50
+output:       /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_earlystop_r25_bo_gpt-4o-mini_r25_best_of_n_early_stop.json
+
+[1/50] question_id=1471 (simple) x25 ...
+  -> EX=1 (4/25 replicas correct)
+
+[2/50] question_id=1472 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[3/50] question_id=1473 (moderate) x25 ...

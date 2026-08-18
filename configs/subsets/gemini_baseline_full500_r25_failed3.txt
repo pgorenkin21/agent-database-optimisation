@@ -1,0 +1,5 @@
+# Auto-generated failed question_ids for Gemini repair
+# source: runs/batches/parallel_baseline_full500_r25_gemini-2.5-flash_r25_best_of_n.json
+# count: 2
+944  # formula_1 challenging 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently exp
+345  # card_games moderate 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Stream cancelled; RPC

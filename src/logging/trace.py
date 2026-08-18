@@ -202,6 +202,27 @@ class RunTrace:
             }
         )
 
+    def log_explore_suppressed(
+        self,
+        *,
+        turn_idx: int,
+        sql: str,
+        matched_sql: str,
+        fact_count: int,
+    ) -> None:
+        """A P4 explore suppression: a redundant probe skipped, facts returned."""
+        self._append(
+            {
+                "event": "explore_suppressed",
+                "run_id": self.run_id,
+                "ts": _utc_now_iso(),
+                "turn_idx": turn_idx,
+                "sql_raw": sql,
+                "matched_sql": matched_sql,
+                "fact_count": fact_count,
+            }
+        )
+
     def log_semantic_injection(
         self,
         *,

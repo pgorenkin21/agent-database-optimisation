@@ -1,0 +1,80 @@
+overnight_stamp=20260815_192631_v8_matrix
+started_utc=2026-08-15T19:26:32Z
+paper=draft_paper_ieee_v8 — 3-method token-bill matrix
+blocks=A C1 B C2
+##### BLOCK A — 50-task isolation #####
+=== WAVE v8_p3_50t_r3 ===
+[19:26:32] START v8_p3_50t_r3_gpt-4o-mini
+[19:26:32] START v8_p3_50t_r3_deepseek-v3-2
+[19:26:32] START v8_p3_50t_r3_gemini-2-5-flash
+[19:33:50] DONE  v8_p3_50t_r3_gemini-2-5-flash (rc=1, EX=70.0)
+[19:34:42] DONE  v8_p3_50t_r3_gpt-4o-mini (rc=1, EX=54.0)
+[19:40:01] DONE  v8_p3_50t_r3_deepseek-v3-2 (rc=1, EX=62.0)
+[19:40:01] wave_done v8_p3_50t_r3
+  P3 GATE gemini-2.5-flash  injections=156 tasks=50 EX=70.0
+  P3 GATE gpt-4o-mini       injections=300 tasks=50 EX=54.0
+  P3 GATE deepseek-v3.2     injections=508 tasks=50 EX=62.0
+  P3 GATE PASSED
+=== WAVE v8_prune_50t_r3 ===
+[19:40:05] START v8_prune_50t_r3_deepseek-v3-2
+[19:40:05] START v8_prune_50t_r3_gpt-4o-mini
+[19:40:05] START v8_prune_50t_r3_gemini-2-5-flash
+[19:46:57] DONE  v8_prune_50t_r3_gemini-2-5-flash (rc=1, EX=74.0)
+[19:48:09] DONE  v8_prune_50t_r3_gpt-4o-mini (rc=1, EX=58.0)
+[19:49:47] DONE  v8_prune_50t_r3_deepseek-v3-2 (rc=1, EX=62.0)
+[19:49:47] wave_done v8_prune_50t_r3
+=== WAVE v8_p3_50t_r10 ===
+[19:49:47] START v8_p3_50t_r10_gpt-4o-mini
+[19:49:47] START v8_p3_50t_r10_gemini-2-5-flash
+[19:49:47] START v8_p3_50t_r10_deepseek-v3-2
+[19:57:45] DONE  v8_p3_50t_r10_gemini-2-5-flash (rc=1, EX=78.0)
+[19:58:03] DONE  v8_p3_50t_r10_gpt-4o-mini (rc=1, EX=56.0)
+[20:08:31] DONE  v8_p3_50t_r10_deepseek-v3-2 (rc=1, EX=66.0)
+[20:08:31] wave_done v8_p3_50t_r10
+=== WAVE v8_p3_50t_r25 ===
+[20:08:31] START v8_p3_50t_r25_gemini-2-5-flash
+[20:08:31] START v8_p3_50t_r25_gpt-4o-mini
+[20:08:31] START v8_p3_50t_r25_deepseek-v3-2
+[20:20:03] DONE  v8_p3_50t_r25_gpt-4o-mini (rc=1, EX=58.0)
+[20:20:23] DONE  v8_p3_50t_r25_gemini-2-5-flash (rc=1, EX=78.0)
+[20:25:51] DONE  v8_p3_50t_r25_deepseek-v3-2 (rc=1, EX=70.0)
+[20:25:51] wave_done v8_p3_50t_r25
+##### BLOCK C1 — 50-task composed #####
+=== WAVE v8_comp_50t_r3 ===
+[20:25:51] START v8_comp_50t_r3_gemini-2-5-flash
+[20:25:51] START v8_comp_50t_r3_deepseek-v3-2
+[20:25:51] START v8_comp_50t_r3_gpt-4o-mini
+[20:33:18] DONE  v8_comp_50t_r3_gpt-4o-mini (rc=1, EX=62.0)
+[20:34:21] DONE  v8_comp_50t_r3_gemini-2-5-flash (rc=1, EX=70.0)
+[20:37:38] DONE  v8_comp_50t_r3_deepseek-v3-2 (rc=1, EX=68.0)
+[20:37:38] wave_done v8_comp_50t_r3
+=== WAVE v8_comp_50t_r10 ===
+[20:37:38] START v8_comp_50t_r10_gemini-2-5-flash
+[20:37:38] START v8_comp_50t_r10_gpt-4o-mini
+[20:37:38] START v8_comp_50t_r10_deepseek-v3-2
+[20:47:17] DONE  v8_comp_50t_r10_gpt-4o-mini (rc=1, EX=60.0)
+[20:49:39] DONE  v8_comp_50t_r10_gemini-2-5-flash (rc=1, EX=70.0)
+[20:52:21] DONE  v8_comp_50t_r10_deepseek-v3-2 (rc=1, EX=70.0)
+[20:52:21] wave_done v8_comp_50t_r10
+=== WAVE v8_comp_50t_r25 ===
+[20:52:21] START v8_comp_50t_r25_gemini-2-5-flash
+[20:52:21] START v8_comp_50t_r25_gpt-4o-mini
+[20:52:21] START v8_comp_50t_r25_deepseek-v3-2
+[21:07:33] DONE  v8_comp_50t_r25_gemini-2-5-flash (rc=1, EX=72.0)
+[21:11:26] DONE  v8_comp_50t_r25_deepseek-v3-2 (rc=1, EX=72.0)
+[21:11:54] DONE  v8_comp_50t_r25_gpt-4o-mini (rc=1, EX=62.0)
+[21:11:54] wave_done v8_comp_50t_r25
+##### BLOCK B — 500-task isolation #####
+=== WAVE v8_p3_500t_r3 ===
+[21:11:54] START v8_p3_500t_r3_gpt-4o-mini
+[21:11:54] START v8_p3_500t_r3_gemini-2-5-flash
+[21:11:54] START v8_p3_500t_r3_deepseek-v3-2
+[22:16:36] DONE  v8_p3_500t_r3_gpt-4o-mini (rc=1, EX=54.2)
+[22:47:33] DONE  v8_p3_500t_r3_gemini-2-5-flash (rc=1, EX=65.0)
+[23:06:43] DONE  v8_p3_500t_r3_deepseek-v3-2 (rc=1, EX=58.0)
+[23:06:43] wave_done v8_p3_500t_r3
+=== WAVE v8_prune_500t_r10 ===
+[23:06:43] START v8_prune_500t_r10_gemini-2-5-flash
+[23:06:43] START v8_prune_500t_r10_deepseek-v3-2
+[23:06:43] START v8_prune_500t_r10_gpt-4o-mini
+[01:20:57] DONE  v8_prune_500t_r10_gemini-2-5-flash (rc=1, EX=29.2)

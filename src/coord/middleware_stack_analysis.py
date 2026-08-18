@@ -28,6 +28,9 @@ FULL_STACK_SCHEMA_PRUNE_BATCH_IDS: dict[int, str] = {
     25: "fullstack_prune_r25_bo",
 }
 
+FULL500_STACK_PRUNE_BATCH_ID = "fullstack_prune_full500_r3"
+FULL500_STACK_REPLICAS = 3
+
 EARLY_STOP_BATCH_IDS: dict[int, str] = {
     10: "earlystop_r10_bo",
     25: "earlystop_r25_bo",
@@ -221,3 +224,50 @@ def load_stack_by_replica_counts(
         n: load_stack_by_replica_count(batch_dir, models=models, n_replicas=n)
         for n in replica_counts
     }
+
+
+def find_full500_stack_prune_batch(batch_dir: Path, model: str) -> Path | None:
+    """Locate full mini-dev full-stack+prune batch (*N*=3)."""
+    return find_full_stack_schema_prune_batch(
+        batch_dir,
+        model,
+        FULL500_STACK_REPLICAS,
+        batch_id=FULL500_STACK_PRUNE_BATCH_ID,
+    )
+
+
+def build_full500_stack_comparisons(
+    batch_dir: Path,
+    *,
+    models: list[str] | None = None,
+) -> dict[str, dict[str, dict[str, Any]]]:
+    """Return {model: {P0, Ch11_prune?, full_stack_prune}} for full mini-dev *N*=3.
+
+    Uses Chapter 2 ``baseline_full500_r3`` as P0 and Chapter 11
+    ``schema_prune_iso_full500_r3`` as the isolated-prune reference when present.
+    """
+    from src.coord.schema_pruning_analysis import (
+        find_full500_isolated_prune_batch,
+        find_full500_p0_batch,
+        schema_prune_batch_summary,
+    )
+
+    out: dict[str, dict[str, dict[str, Any]]] = {}
+    for model in models or DEFAULT_MODELS:
+        p0_path = find_full500_p0_batch(batch_dir, model)
+        fsp_path = find_full500_stack_prune_batch(batch_dir, model)
+        if not p0_path or not fsp_path:
+            continue
+        entry: dict[str, dict[str, Any]] = {
+            "P0": _p0_summary(load_batch(p0_path), path=p0_path),
+            "full_stack_prune": full_stack_schema_prune_batch_summary(
+                load_batch(fsp_path), path=fsp_path
+            ),
+        }
+        prune_path = find_full500_isolated_prune_batch(batch_dir, model)
+        if prune_path:
+            entry["Ch11_prune"] = schema_prune_batch_summary(
+                load_batch(prune_path), path=prune_path
+            )
+        out[model] = entry
+    return out

@@ -1,296 +1,128 @@
-# Coordinating Speculative Agent Workloads Over Data Backends
+# Prompt Cost Optimisation for Speculative Parallelism in Text-to-SQL
 
-MSc project: middleware coordination policies for redundancy elimination in multi-agent BIRD text-to-SQL workloads.
+Schema pruning, a semantic fact store, and cache-stable structure for parallel text-to-SQL agents.
 
-## Phase 0 - Project scaffold
+**Pasha Gorenkin** · MSc Project 2025/26 · School of Electronic Engineering and Computer Science, Queen Mary University of London
+
+This is the supporting material for the dissertation research paper. It holds the agent harness, the three prompt-layer methods the paper evaluates, the experiment runners, the analysis that produces every number in the paper, and the scripts that build the paper's figures and tables.
+
+---
+
+## What is here
+
+| Path | What it is |
+|---|---|
+| `src/agent/` | the ReAct agent loop, schema pruning, prompt construction, and the cache-stable loop |
+| `src/coord/` | replica coordination, the semantic fact store, and the analysis modules |
+| `src/llm/` | provider clients, the model registry, retry and cost accounting |
+| `src/db/`, `src/bird/`, `src/eval/` | SQLite execution, BIRD task loading, execution-accuracy scoring |
+| `src/logging/trace.py` | the append-only JSONL trace writer that every measurement is drawn from |
+| `scripts/` | experiment runners, analysis, and figure/table generation (see below) |
+| `tests/` | 191 tests covering the mechanisms the paper claims |
+| `configs/` | `default.yaml`, the model registry `models.yaml`, and task subsets |
+| `runs/reports/` | the analysis outputs, including `v8_numbers.txt`, which is the source of every table |
+| `runs/batches/` | per-batch result summaries, one JSON per experiment cell *(submission zip only)* |
+| `thesis/paper drafts/` | the paper source, the reflective essay, and the presentation deck |
+
+### The scripts that matter
+
+These twelve scripts are the ones the paper depends on. The rest of `scripts/` is experiment plumbing from earlier waves.
+
+| Script | Does |
+|---|---|
+| `run_parallel_batch.py` | the experiment runner: N replicas on a task set, with any combination of methods |
+| `run_v8_matrix.sh` | the 50-task grid, four arms × three models × three replica counts |
+| `run_v8_500t_r3.sh`, `run_v8_500t_r10.sh` | the full-split waves |
+| `run_v8_cleanup.sh`, `run_v8_prune_fill.sh` | the re-runs that put every cell on a clean `v8_` identifier |
+| `analyze_v8_results.py` | paired bootstrap intervals for all 60 cells → `runs/reports/v8_numbers.txt` |
+| `analyze_schema_pruning.py` | the offline gold-table recall analysis, which calls no model |
+| `v8_additivity.py` | the composition check against a multiplicative null |
+| `explore_redundancy_stats.py` | duplicated exploratory SQL in absolute terms |
+| `make_v8_figures.py` | the charts, at column size or `--slides` for presentation size. Seven of the eight rebuild from the batch summaries; `fig2_cached_by_turn` needs the per-replica traces and is shipped pre-rendered |
+| `make_v8_appendix_tables.py` | the appendix result matrices |
+| `assemble_v9.py` | splices `v9_sections/*.md` into the submitted LaTeX and the Overleaf bundle |
+
+---
+
+## Running it
 
 ### Prerequisites
 
-- Python 3.10+ (3.12 recommended; see `.python-version`)
-- [uv](https://docs.astral.sh/uv/)
-- `wget` and `unzip`
-- API keys for models you run (see below)
-
-### Setup (uv)
+- Python 3.12 and [uv](https://docs.astral.sh/uv/)
+- API keys for whichever providers you run
 
 ```bash
-cd "/workspaces/Cursor Agent Database Optimisation"
-
 uv sync --all-groups
-cp .env.example .env
-# Set OPENAI_API_KEY, GEMINI_API_KEY, DEEPSEEK_API_KEY (all three for full eval matrix)
+cp .env.example .env      # then set OPENAI_API_KEY, GEMINI_API_KEY, DEEPSEEK_API_KEY
 uv run python scripts/check_setup.py
-uv run pytest -q
+uv run pytest -q          # 191 passed
 ```
 
-### LLM models
+### The BIRD dataset is not included
 
-Configured in [`configs/models.yaml`](configs/models.yaml) and referenced from [`configs/default.yaml`](configs/default.yaml):
-
-| Registry key | Provider | API model ID | Env var |
-|--------------|----------|--------------|---------|
-| `gpt-4o-mini` | OpenAI | `gpt-4o-mini` | `OPENAI_API_KEY` |
-| `gemini-2.5-flash` | Google | `gemini-2.5-flash` | `GEMINI_API_KEY` or `GOOGLE_API_KEY` |
-| `deepseek-v3.2` | DeepSeek | `deepseek-chat` (V3.2) | `DEEPSEEK_API_KEY` |
-
-- **Default agent:** `llm.default` (currently `gpt-4o-mini`)
-- **Thesis eval matrix:** `llm.eval_models` lists all three
-
-Change the default for a single run (Phase 1+): set `llm.default` or pass `--model gemini-2.5-flash`.
-
-DeepSeek uses the [OpenAI-compatible API](https://api-docs.deepseek.com/) at `https://api.deepseek.com`.
-
-If `gemini-2.5-flash` is unavailable in your region, edit `api_model` in `configs/models.yaml`.
-
-### Download BIRD mini-dev (default)
-
-Use **mini-dev first** (500 tasks, 11 databases). Switch to full dev only when the harness is stable.
+BIRD mini-dev is roughly 5 GB and carries its own licence, so it is not redistributed here. Fetch it once:
 
 ```bash
-chmod +x scripts/download_bird.sh
-./scripts/download_bird.sh
-uv run python scripts/check_setup.py
+bash scripts/download_bird.sh
 ```
 
-Expected paths:
+That writes `data/bird/mini_dev/`, the path `configs/default.yaml` expects. **Everything below that only reads results works without it.** Only running agents needs the databases.
 
-```
-data/bird/mini_dev/mini_dev_sqlite.json
-data/bird/mini_dev/dev_databases/<db_id>/sqlite/*.sqlite
-```
+### Why there is no executable
 
-**Cheap smoke runs** (50 tasks):
+The project is a set of experiments against commercial LLM APIs, not an application, so there is nothing meaningful to package as a binary. The two things an examiner is most likely to want are single commands.
+
+**Reproduce a run end to end** (needs the dataset and an OpenAI key, costs a few cents):
 
 ```bash
-uv run python scripts/list_question_ids.py --limit 50 > configs/subsets/smoke_50.txt
+uv run python scripts/run_parallel_batch.py \
+    --subset-file configs/subsets/demo_one_task.txt \
+    --replicas 5 --model gpt-4o-mini \
+    --schema-pruning --schema-pruning-mode hybrid \
+    --semantic-store --prompt-cache
 ```
 
-Set in `configs/default.yaml`:
+One question, five replicas, all three methods. Expect execution accuracy 100%, the schema pruned from 11,847 to 6,354 characters, and roughly 87% of input tokens served from cache. It writes a batch summary to `runs/batches/` and one JSONL trace per replica to `runs/`.
 
-```yaml
-bird:
-  subset_file: configs/subsets/smoke_50.txt
-  subset_limit: 0
-```
-
-Or keep `subset_limit: 50` with no subset file (first 50 tasks in JSON order).
-
-### Full BIRD dev (later)
+**Regenerate every number in the paper** from the batch summaries, no API calls and no dataset needed:
 
 ```bash
-chmod +x scripts/download_bird_full_dev.sh
-./scripts/download_bird_full_dev.sh
-uv run python scripts/check_setup.py --config configs/full_dev.yaml
+uv run python scripts/analyze_v8_results.py       # -> runs/reports/v8_numbers.txt
+uv run python scripts/v8_additivity.py            # the composition check
+uv run python scripts/make_v8_figures.py          # -> thesis/figures/
+uv run python scripts/make_v8_appendix_tables.py  # -> the appendix tables
 ```
 
-### Configuration
+`analyze_v8_results.py` runs in strict mode by default: only batches carrying a clean `v8_` identifier are admitted, and any batch that completed under 90% of its tasks is refused rather than reported on a shrunken sample.
 
-| Setting | Default (mini-dev) | Notes |
-|---------|-------------------|--------|
-| `bird.split` | `mini_dev` | `full_dev` in `configs/full_dev.yaml` |
-| `bird.tasks_json` | `mini_dev_sqlite.json` | Task list + gold SQL |
-| `bird.subset_limit` | `50` | `0` = all 500 mini-dev tasks |
-| `use_evidence` | `true` | Gold evidence in prompts |
-| `llm.model` | `gpt-4o-mini` | Primary model |
+---
 
-### Repository layout
+## Tracing a claim back to its evidence
 
-```
-configs/default.yaml      # mini-dev paths (default)
-configs/full_dev.yaml       # full dev paths
-data/bird/mini_dev/         # downloaded mini-dev (gitignored)
-data/bird/full_dev/         # full dev when needed (gitignored)
-```
+Every quantitative claim follows the same path: **paper → `v8_numbers.txt` → a batch JSON → the script that produced it.**
 
-### Phase 1a — Gold SQL and execution accuracy (done)
+| Claim in the paper | Batch identifier | Produced by |
+|---|---|---|
+| Baselines (§3.3) | `v8_p0_*` | `run_v8_cleanup.sh`, `run_v8_500t_r3.sh`, `run_v8_500t_r10.sh` |
+| Schema pruning (§6.1) | `v8_prune_*` | `run_v8_matrix.sh`, `run_v8_prune_fill.sh` |
+| Offline recall (§6.1) | n/a, offline | `analyze_schema_pruning.py` |
+| Fact store (§6.2) | `v8_p3_*` | `run_v8_matrix.sh` |
+| Prompt cache (§6.3) | `v8_pc_*` | `run_v8_matrix.sh`, `run_v8_cleanup.sh` |
+| Composition (§6.4) | `v8_comp_*` | `run_v8_matrix.sh`, `run_v8_500t_r3.sh` |
+| All intervals | n/a | `analyze_v8_results.py` |
 
-Runs use **SQLite** (same as official BIRD `evaluation.py`), not DuckDB, so gold SQL with `IIF` and other SQLite syntax executes correctly.
+Identifiers follow `v8_[arm]_[scale]_r[N]`, where scale is `50t` or `500t` and N is 3, 10 or 25 at 50 tasks and 3 or 10 at 500.
 
-```bash
-# One task (default: first in JSON)
-uv run python scripts/run_one_gold.py --question-id 1471
+---
 
-# Sanity: gold SQL vs itself on 20 tasks (expect 20/20 EX=1)
-uv run python scripts/run_gold_sanity.py --limit 20
+## Honest notes on what is and is not here
 
-# Wrong SQL on purpose (expect EX=0)
-uv run python scripts/run_one_gold.py --question-id 1471 --predicted-sql "SELECT 1"
-```
+- **Per-replica JSONL traces are not included for the historical runs.** The batch summaries carry every number the paper reports, and those are complete. The raw traces behind them are not in this submission. The demo run above regenerates traces so the format can be inspected, and `runs/traces_demo/` in the submission zip holds one worked example.
+- **No second seed exists for any cell in the final design.** Replication is the paper's main stated limitation, in §7.
+- **DeepSeek changed model version mid-project.** On 2026-07-24 the endpoint was folded into its successor. Every DeepSeek result in the paper is re-run on the current version; `runs/reports/within_era_deepseek_v5.txt` records the comparison that established the problem.
+- **Costs are list-price estimates**, not invoices, and cached-token counts are provider-reported.
+- **Two coordination policies named in the registered project definition were cut** and are not evaluated in the paper. Their implementation survives in `src/` because the runner still accepts their flags, but no reported result uses them. §7 declares the narrowing and the reflective essay explains why.
 
-### Phase 1b — JSONL traces (done)
+## Generative AI
 
-Each `run_one_gold.py` run writes `runs/<run_id>.jsonl` with events:
-
-| Event | Fields |
-|-------|--------|
-| `run_start` | `question_id`, `db_id`, `policy` (P0), `seed`, `bird_split` |
-| `sql_execute` | `sql_raw`, `sql_role`, `latency_ms`, `row_count`, `result_sample`, `error` |
-| `run_end` | `ex_correct`, `predicted_sql`, `gold_sql`, `wall_clock_ms` |
-
-```bash
-uv run python scripts/run_one_gold.py --question-id 1471
-uv run python scripts/inspect_trace.py runs/<run_id>.jsonl
-```
-
-### Phase 1c — Single agent (done)
-
-Tool-calling agent: `execute_sql` (explore) and `submit_sql` (final answer). Traces in `runs/<run_id>.jsonl`.
-
-```bash
-uv run python scripts/run_one_agent.py --question-id 1471 --model gpt-4o-mini
-uv run python scripts/run_one_agent.py --index 0 --model deepseek-v3.2
-uv run python scripts/run_one_agent.py --question-id 1471 --model gemini-2.5-flash
-uv run python scripts/inspect_trace.py runs/<run_id>.jsonl
-```
-
-Models: registry keys from `configs/models.yaml` (`gpt-4o-mini`, `gemini-2.5-flash`, `deepseek-v3.2`).
-
-### Batch runs
-
-```bash
-# Uses bird.subset_limit (default 50) from configs/default.yaml
-uv run python scripts/run_batch.py --model gpt-4o-mini
-
-# Custom limit or subset file
-uv run python scripts/run_batch.py --model gpt-4o-mini --limit 5
-uv run python scripts/list_question_ids.py --limit 10 > configs/subsets/smoke_10.txt
-uv run python scripts/run_batch.py --subset-file configs/subsets/smoke_10.txt --limit 0
-
-# Preview task list without API calls
-uv run python scripts/run_batch.py --dry-run --limit 5
-```
-
-Outputs: `runs/batches/batch_<id>_<model>.csv` and `.json` plus per-task traces in `runs/<run_id>.jsonl`.
-
-### Phase 2 — Parallel agents (in progress)
-
-Run **N replicas** on the same task, coordinate the final answer, and measure redundancy.
-
-**Policies** (`src/coord/policies.py`):
-
-| Policy | Behaviour |
-|--------|-----------|
-| `best_of_n` | Pick any correct replica (fewest turns); else shortest submission |
-| `first_success` | First replica to finish with EX=1 |
-| `majority_vote` | Largest result-set bucket; prefer correct within bucket |
-
-Per-replica traces use `policy=P0_parallel` (or `P0_early_stop` with `--early-stop`) and `agent_id=agent_0..N-1`. A coordinator trace is written to `runs/coord_<id>.jsonl`.
-
-```bash
-# One task, 3 replicas
-uv run python scripts/run_parallel_one.py --question-id 1471 --replicas 3 --policy best_of_n
-
-# Early stopping: cancel siblings when one replica gets EX=1 (use best_of_n for apples-to-apples vs P0)
-uv run python scripts/run_parallel_one.py --question-id 1471 --replicas 3 --early-stop --policy best_of_n
-
-# Batch (smoke subset)
-uv run python scripts/run_parallel_batch.py --model gemini-2.5-flash --limit 5 --replicas 3
-
-# Batch with early stopping (apples-to-apples: same policy as P0 baseline)
-uv run python scripts/run_parallel_batch.py --model gpt-4o-mini --limit 50 --replicas 10 \
-  --early-stop --policy best_of_n --batch-id earlystop_r10_bo
-
-# Compare early stop vs P0 baseline reports
-uv run python scripts/compare_early_stop.py --early-stop-batch-id earlystop_r10_bo
-
-# P1 shared SQL result cache (explore-query dedup across replicas)
-uv run python scripts/run_parallel_batch.py --model gpt-4o-mini --limit 5 --replicas 3 \
-  --shared-cache --policy best_of_n --batch-id p1_smoke_test
-
-# Compare P1 vs P0 baseline reports + regenerate Chapter 4 draft
-uv run python scripts/compare_p1.py
-uv run python scripts/generate_chapter4_draft.py
-
-# P2 shared discovery board (sub-expression propagation via prompt injection)
-uv run python scripts/run_parallel_batch.py --model gpt-4o-mini --limit 5 --replicas 3 \
-  --discovery-board --policy best_of_n --batch-id p2_smoke_test
-
-# Compare P2 vs P0 baseline reports + regenerate Chapter 5 draft
-uv run python scripts/compare_p2.py
-uv run python scripts/generate_chapter5_draft.py
-
-# Compare P3 vs P2 full stack+prune + recommendations
-uv run python scripts/compare_p3.py
-
-# P3 semantic store (rule-based facts, bounded prompt injection)
-uv run python scripts/run_parallel_batch.py --model gpt-4o-mini --limit 5 --replicas 3 \
-  --semantic-store --shared-cache --policy best_of_n --batch-id p3_smoke_test
-
-# Semantic schema pruning (TF-IDF on column descriptions; modes: keyword | semantic | hybrid)
-uv run python scripts/analyze_schema_pruning.py --mode semantic
-uv run python scripts/run_parallel_batch.py --model gpt-4o-mini --limit 5 --replicas 3 \
-  --schema-pruning --schema-pruning-mode hybrid --batch-id schema_semantic_hybrid
-
-# Middleware stack (P0/P1/P2/P1+P2/early stop/full stack) + Chapter 6 synthesis
-uv run python scripts/compare_middleware_stack.py
-uv run python scripts/compare_p1p2.py
-uv run python scripts/generate_chapter6_draft.py
-
-# Full stack: P1 cache + P2 discovery + early stop (all eval models, N=25)
-uv run python scripts/run_full_stack_sweep.py --dry-run
-uv run python scripts/run_full_stack_sweep.py
-
-# Dry-run task list
-uv run python scripts/run_parallel_batch.py --dry-run --limit 5 --replicas 3
-```
-
-**Redundancy metrics** (in coord trace + batch JSON): duplicate explore SQL, token overhead ratio vs cheapest replica, replicas with EX=1.
-
-### Eval matrix (all models × variations)
-
-Run every model in `llm.eval_models` for each variation. Within a variation, all models run **concurrently** (default 3 workers); variations run one after another.
-
-```bash
-# All 3 models × single-agent + parallel (smoke-50 from config)
-uv run python scripts/run_eval_matrix.py
-
-# Preview the 6 jobs without API calls
-uv run python scripts/run_eval_matrix.py --dry-run --limit 5
-
-# Custom subset, sequential model runs
-uv run python scripts/run_eval_matrix.py --limit 10 --sequential
-
-# Single-agent only
-uv run python scripts/run_eval_matrix.py --variations single
-```
-
-Writes per-model batch JSON/CSV plus a manifest at `runs/batches/matrix_<id>.json`.
-
-### Phase 2a — Baseline redundancy report (P0)
-
-Independent parallel replicas (`P0_parallel`) with no shared middleware. Measures query overlap, sub-expression duplication, token overhead, and wall-clock time for thesis Chapter 2.
-
-```bash
-# Run replica-count sweep (3, 10, 25) on smoke subset — expensive at r=25
-uv run python scripts/run_baseline_sweep.py --model gpt-4o-mini --dry-run
-uv run python scripts/run_baseline_sweep.py --model gpt-4o-mini --replicas 3 10 25
-
-# Analyse existing parallel batches → runs/reports/baseline_<id>.md + .json
-uv run python scripts/analyze_baseline_redundancy.py \
-  --sweep-id 20260610_124547_2f8250 --model gpt-4o-mini --report-id smoke_r3
-```
-
-Metrics: total/unique explore SQL (string + AST), sub-expression overlap (sqlglot fragments), explore redundancy %, token overhead ratio, coordination wall-clock.
-
-```bash
-# Plot scaling curves for all three model reports → runs/reports/plots/*.png
-uv run python scripts/plot_baseline_redundancy.py
-
-# Custom reports or output directory
-uv run python scripts/plot_baseline_redundancy.py \
-  runs/reports/baseline_gemini_baseline_full.json \
-  --out-dir runs/reports/plots/gemini
-```
-
-### Phase 2a — Chapter 2 draft (P0 write-up)
-
-Generate a thesis-ready Chapter 2 markdown from the three baseline report JSON files:
-
-```bash
-uv run python scripts/generate_chapter2_draft.py
-# → thesis/chapter2_baseline_redundancy.md
-```
-
-Figures are embedded from `runs/reports/plots/`. Re-run `plot_baseline_redundancy.py` after updating reports.
-
-**Not yet built:** P4 richer coordination (phase-aware sharing, cross-model ensembles). P1 shared SQL cache (`--shared-cache`), P2 discovery board (`--discovery-board`), and **P3 semantic store** (`--semantic-store`) are available on parallel batch scripts. Schema pruning supports `--schema-pruning-mode keyword|semantic|hybrid`.
+Generative AI tools were used under my direction for implementation assistance, and for editorial drafting of the paper from experiment reports. All quantitative content is computed by deterministic scripts from execution traces; no figure or table value is model-generated. All design decisions, result interpretation and final text were reviewed and approved by me. The paper's appendix carries the full statement.

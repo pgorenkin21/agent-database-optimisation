@@ -1,0 +1,80 @@
+=== bootstrap ===
+[Full-500 N=3] GPT P1 vs P0: n=498 Δ=+2.8 pp CI=[+0.6, +5.2]
+[Full-500 N=3] GPT prune vs P0: n=498 Δ=+0.2 pp CI=[-3.0, +3.4] †
+[Full-500 N=3] GPT prompt-cache vs P0: n=498 Δ=+0.8 pp CI=[-1.2, +3.0] †
+[Full-500 N=3] GPT P4 vs PC: n=498 Δ=+0.6 pp CI=[-1.6, +2.8] †
+[Full-500 N=3] GPT P1+P4 vs P1: n=498 Δ=-0.2 pp CI=[-2.4, +2.0] †
+[Full-500 N=3] GPT P3 stack vs P2 stack: n=498 Δ=+0.8 pp CI=[-1.6, +3.2] †
+[Full-500 N=3] GPT compose vs P0: n=498 Δ=+0.8 pp CI=[-2.2, +3.8] †
+[Full-500 N=3 rep2] GPT P4 rep2 vs PC: n=498 Δ=+0.4 pp CI=[-1.8, +2.8] †
+[Full-500 N=3 rep2] GPT compose rep2 vs P0: n=498 Δ=+1.2 pp CI=[-1.8, +4.2] †
+[Smoke N=25 rep2-matched] GPT P1 rep2 vs P0 rep2: n=50 Δ=+0.0 pp CI=[-6.0, +6.0] †
+[Smoke N=25 rep2-matched] GPT prune rep2 vs P0 rep2: n=50 Δ=+2.0 pp CI=[-6.0, +10.0] †
+[Smoke N=25 rep2-matched] GPT PC rep2 vs P0 rep2: n=50 Δ=-2.0 pp CI=[-6.0, +0.0] †
+[Smoke N=25 rep2-matched] GPT P3 rep2 vs P2 rep2: n=50 Δ=+2.0 pp CI=[+0.0, +6.0] †
+[Smoke N=25 rep2-matched] GPT compose rep2 vs P0 rep2: n=49 Δ=+4.1 pp CI=[-4.1, +12.2] †
+[Full-500 N=3] Gemini P1 vs P0: n=497 Δ=+1.4 pp CI=[-0.2, +3.2] †
+[Full-500 N=3] Gemini prune vs P0: n=494 Δ=-1.2 pp CI=[-3.8, +1.4] †
+[Full-500 N=3] Gemini prompt-cache vs P0: n=497 Δ=+0.2 pp CI=[-1.0, +1.4] †
+[Full-500 N=3] Gemini P4 vs PC: n=497 Δ=-0.2 pp CI=[-1.6, +1.2] †
+[Full-500 N=3] Gemini P1+P4 vs P1: n=462 Δ=+0.2 pp CI=[-1.5, +1.9] †
+[Full-500 N=3] Gemini compose vs P0: n=497 Δ=-0.8 pp CI=[-3.4, +1.8] †
+[Full-500 N=3 rep2] Gemini P4 rep2 vs PC: n=497 Δ=-0.4 pp CI=[-1.6, +0.6] †
+[Full-500 N=3 rep2] Gemini compose rep2 vs P0: n=494 Δ=+0.8 pp CI=[-1.6, +3.4] †
+[Smoke N=25 rep2-matched] Gemini P1 rep2 vs P0 rep2: n=49 Δ=+6.1 pp CI=[+0.0, +14.3] †
+[Smoke N=25 rep2-matched] Gemini prune rep2 vs P0 rep2: n=49 Δ=+0.0 pp CI=[-8.2, +8.2] †
+[Smoke N=25 rep2-matched] Gemini PC rep2 vs P0 rep2: n=50 Δ=+0.0 pp CI=[+0.0, +0.0] †
+[Smoke N=25 rep2-matched] Gemini P3 rep2 vs P2 rep2: n=50 Δ=-8.0 pp CI=[-18.0, +0.0] †
+[Smoke N=25 rep2-matched] Gemini compose rep2 vs P0 rep2: n=50 Δ=+4.0 pp CI=[-6.0, +14.0] †
+[Full-500 N=3] DeepSeek P1 vs P0: n=498 Δ=+1.2 pp CI=[-1.0, +3.4] †
+[Full-500 N=3] DeepSeek prune vs P0: n=498 Δ=+0.4 pp CI=[-2.0, +2.8] †
+[Full-500 N=3] DeepSeek prompt-cache vs P0: n=498 Δ=+0.8 pp CI=[-1.4, +3.0] †
+[Full-500 N=3] DeepSeek P4 vs PC: n=498 Δ=+6.0 pp CI=[+2.6, +9.2]
+[Full-500 N=3] DeepSeek P1+P4 vs P1: n=498 Δ=+5.8 pp CI=[+2.6, +9.0]
+[Full-500 N=3] DeepSeek P3 stack vs P2 stack: n=498 Δ=+3.0 pp CI=[-0.2, +6.2] †
+[Full-500 N=3] DeepSeek compose vs P0: n=498 Δ=+7.0 pp CI=[+3.8, +10.4]
+[Full-500 N=3 rep2] DeepSeek P4 rep2 vs PC: n=498 Δ=+6.0 pp CI=[+2.6, +9.6]
+[Full-500 N=3 rep2] DeepSeek compose rep2 vs P0: n=498 Δ=+7.4 pp CI=[+3.8, +11.0]
+[Smoke N=25 rep2-matched] DeepSeek P1 rep2 vs P0 rep2: n=50 Δ=+2.0 pp CI=[+0.0, +6.0] †
+[Smoke N=25 rep2-matched] DeepSeek prune rep2 vs P0 rep2: n=50 Δ=-2.0 pp CI=[-6.0, +0.0] †
+[Smoke N=25 rep2-matched] DeepSeek PC rep2 vs P0 rep2: n=50 Δ=+0.0 pp CI=[+0.0, +0.0] †
+[Smoke N=25 rep2-matched] DeepSeek P3 rep2 vs P2 rep2: n=50 Δ=+2.0 pp CI=[-6.0, +12.0] †
+[Smoke N=25 rep2-matched] DeepSeek compose rep2 vs P0 rep2: n=50 Δ=+2.0 pp CI=[+0.0, +6.0] †
+[Unconfound Gemini N=25] Gemini P3 vs P2 repair: n=48 Δ=-8.3 pp CI=[-16.7, -2.1]
+[Unconfound Gemini N=25] Gemini P3 rep2 vs P2 rep2: n=50 Δ=-8.0 pp CI=[-18.0, +0.0] †
+[Unconfound Gemini N=25] Gemini P3 vs P2 old (confounded): n=39 Δ=-2.6 pp CI=[-10.3, +5.1] †
+=== stability ===
+Smoke N=25 composition / GPT: EX 58.0→65.3 (Δ=+6.1 pp †), tokens -18.2%
+Smoke N=25 prompt-cache / GPT: EX 62.0→58.0 (Δ=-4.0 pp †), tokens +4.0%
+Smoke N=25 P4 / GPT: EX 62.0→60.0 (Δ=-2.0 pp †), tokens +1.0%
+Smoke N=25 prune / GPT: EX 60.0→62.0 (Δ=+2.0 pp †), tokens +1.8%
+Smoke N=25 P1 / GPT: EX 62.0→60.0 (Δ=-2.0 pp †), tokens +110.9%
+Smoke N=25 P0 baseline / GPT: EX 62.0→60.0 (Δ=-2.0 pp †), tokens +4.2%
+Smoke N=25 P2 stack / GPT: EX 54.0→60.0 (Δ=+6.0 pp †), tokens +19.4%
+Smoke N=25 P3 stack / GPT: EX 60.0→62.0 (Δ=+2.0 pp †), tokens -6.8%
+Full-500 P4 / GPT: EX 54.2→54.0 (Δ=-0.2 pp †), tokens +0.0%
+Full-500 compose / GPT: EX 53.6→54.0 (Δ=+0.4 pp †), tokens -0.7%
+Smoke N=25 composition / Gemini: EX 78.0→78.0 (Δ=+0.0 pp †), tokens -0.2%
+Smoke N=25 prompt-cache / Gemini: EX 75.5→74.0 (Δ=+0.0 pp †), tokens +3.4%
+Smoke N=25 P4 / Gemini: EX 74.0→74.0 (Δ=+0.0 pp †), tokens -0.2%
+Smoke N=25 prune / Gemini: EX 74.0→73.5 (Δ=+0.0 pp †), tokens -2.2%
+Smoke N=25 P1 / Gemini: EX 73.5→79.6 (Δ=+4.2 pp †), tokens +12.2%
+Smoke N=25 P0 baseline / Gemini: EX 74.5→74.0 (Δ=+0.0 pp †), tokens +9.2%
+Smoke N=25 P2 stack / Gemini: EX 79.2→80.0 (Δ=+0.0 pp †), tokens +6.4%
+Smoke N=25 P3 stack / Gemini: EX 72.0→72.0 (Δ=+0.0 pp †), tokens +4.3%
+Full-500 P4 / Gemini: EX 64.6→64.4 (Δ=-0.2 pp †), tokens +1.1%
+Full-500 compose / Gemini: EX 63.9→65.3 (Δ=+1.4 pp †), tokens -3.8%
+Smoke N=25 composition / DeepSeek: EX 70.0→70.0 (Δ=+0.0 pp †), tokens -0.6%
+Smoke N=25 prompt-cache / DeepSeek: EX 60.0→68.0 (Δ=+8.0 pp), tokens -30.3%
+Smoke N=25 P4 / DeepSeek: EX 66.0→66.0 (Δ=+0.0 pp †), tokens -27.7%
+Smoke N=25 prune / DeepSeek: EX 62.0→66.0 (Δ=+4.0 pp †), tokens -23.5%
+Smoke N=25 P1 / DeepSeek: EX 62.0→70.0 (Δ=+8.0 pp), tokens +65.1%
+Smoke N=25 P0 baseline / DeepSeek: EX 64.0→68.0 (Δ=+4.0 pp †), tokens -30.4%
+Smoke N=25 P2 stack / DeepSeek: EX 64.0→64.0 (Δ=+0.0 pp †), tokens +49.0%
+Smoke N=25 P3 stack / DeepSeek: EX 62.0→66.0 (Δ=+4.0 pp †), tokens +2.6%
+Full-500 P4 / DeepSeek: EX 58.2→58.2 (Δ=+0.0 pp †), tokens +5.9%
+Full-500 compose / DeepSeek: EX 58.4→58.8 (Δ=+0.4 pp †), tokens -5.4%
+=== pack summary ===
+wrote /workspaces/Cursor Agent Database Optimisation/runs/reports/bootstrap_ex_cis_v4.md
+wrote /workspaces/Cursor Agent Database Optimisation/runs/reports/rep_stability_v4.md
+wrote /workspaces/Cursor Agent Database Optimisation/runs/reports/robustness_pack_v4.md

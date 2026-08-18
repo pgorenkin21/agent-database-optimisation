@@ -1,0 +1,75 @@
+batch_id:     20260610_153343_f55e6c_baseline_r25
+model:        gpt-4o-mini
+replicas:     25
+policy:       best_of_n
+tasks:        20
+output:       /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_20260610_153343_f55e6c_baseline_r25_gpt-4o-mini_r25_best_of_n.json
+
+[1/20] question_id=1471 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[2/20] question_id=1472 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[3/20] question_id=1473 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[4/20] question_id=1476 (challenging) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[5/20] question_id=1479 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[6/20] question_id=1480 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[7/20] question_id=1481 (challenging) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[8/20] question_id=1482 (challenging) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[9/20] question_id=1483 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[10/20] question_id=1484 (simple) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[11/20] question_id=1486 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[12/20] question_id=1490 (moderate) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[13/20] question_id=1493 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[14/20] question_id=1498 (simple) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[15/20] question_id=1500 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[16/20] question_id=1501 (moderate) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[17/20] question_id=1505 (simple) x25 ...
+  -> EX=0 (0/25 replicas correct)
+
+[18/20] question_id=1506 (moderate) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[19/20] question_id=1507 (simple) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+[20/20] question_id=1509 (moderate) x25 ...
+  -> EX=1 (25/25 replicas correct)
+
+Parallel batch 20260610_153343_f55e6c_baseline_r25
+  Tasks:      20 / 20
+  EX:         45.0%
+  Avg overhead ratio: 25.388
+  Avg explore redundancy: 90.43%
+
+Wrote /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_20260610_153343_f55e6c_baseline_r25_gpt-4o-mini_r25_best_of_n.json
+Wrote /workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_20260610_153343_f55e6c_baseline_r25_gpt-4o-mini_r25_best_of_n.csv

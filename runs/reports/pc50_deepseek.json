@@ -1,0 +1,25 @@
+{
+  "matched_tasks": 50,
+  "cache_discount": 0.5,
+  "baseline": {
+    "ex_correct": 30,
+    "ex_pct": 60.0,
+    "prompt_tokens": 2024527,
+    "completion_tokens": 114897
+  },
+  "cached": {
+    "ex_correct": 28,
+    "ex_pct": 56.0,
+    "prompt_tokens": 2103131,
+    "completion_tokens": 120007,
+    "cached_prompt_tokens": 1985664,
+    "cached_prompt_pct": 94.4,
+    "effective_input_tokens": 1110299.0,
+    "within_run_input_saving_pct": 47.2
+  },
+  "deltas": {
+    "ex_pp": -4.0,
+    "raw_prompt_token_pct": 3.9,
+    "effective_input_token_pct": -45.2
+  }
+}

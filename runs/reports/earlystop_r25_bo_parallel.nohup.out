@@ -1,0 +1,10 @@
+=== Parallel early stop r=25 sweep started 2026-06-16T11:28:25Z ===
+Launched gpt-4o-mini (PID 39474)
+Launched gemini-2.5-flash (PID 39478)
+Launched deepseek-v3.2 (PID 39483)
+WARNING: gpt-4o-mini exited non-zero
+WARNING: gemini-2.5-flash exited non-zero
+WARNING: deepseek-v3.2 exited non-zero
+
+=== Running comparison report ===
+=== Parallel sweep complete (fail=1) 2026-06-16T12:31:44Z ===

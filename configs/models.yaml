@@ -1,18 +1,40 @@
 # Model registry for experiments. Keys are used in configs/default.yaml (llm.default, llm.eval_models).
 #
 # DeepSeek: V3.2 is served as deepseek-chat on the official API (OpenAI-compatible).
+#
+# price_per_1m_* fields are USD per 1M tokens, used by src/llm/cost.py to turn
+# trace token counts into cost figures. Checked 2026-07-16; re-verify before
+# citing in the thesis, pricing pages change without notice.
 models:
   gpt-4o-mini:
     label: GPT-4o mini
     provider: openai
     api_model: gpt-4o-mini
     api_key_env: OPENAI_API_KEY
+    # Stable since 2024 launch; no longer on OpenAI's flagship pricing page
+    # (superseded there by gpt-5.x) but the model itself has no retirement
+    # date. Confirm against your OpenAI billing dashboard before citing.
+    price_per_1m_input: 0.15
+    price_per_1m_output: 0.60
+    price_per_1m_cached_input: 0.075
 
   gemini-2.5-flash:
     label: Gemini 2.5 Flash
     provider: google
     api_model: gemini-2.5-flash
     api_key_env: GEMINI_API_KEY
+    # Standard (non-batch) tier, text/image/video input, from
+    # ai.google.dev/gemini-api/docs/pricing (checked 2026-08-16).
+    # Cached input is 10% of standard input for Gemini 2.5 and above. This was
+    # `null` until 2026-08-16, which made every consumer invent its own
+    # fallback: src/llm/cost.py billed cached tokens at the FULL input rate
+    # while scripts/analyze_v8_results.py assumed a 50% discount, so the same
+    # run costed two different ways. The published rate removes the guess.
+    # Storage is billed only for explicit context caching; this project uses
+    # implicit caching (see src/llm/chat_cached.py), so no storage cost applies.
+    price_per_1m_input: 0.30
+    price_per_1m_output: 2.50
+    price_per_1m_cached_input: 0.03
 
   deepseek-v3.2:
     label: DeepSeek V3.2
@@ -20,3 +42,11 @@ models:
     api_model: deepseek-chat
     base_url: https://api.deepseek.com
     api_key_env: DEEPSEEK_API_KEY
+    # NOTE: deepseek-chat is deprecated 2026-07-24 (folded into deepseek-v4-flash
+    # compatibility mode) — separate from pricing, but experiments on this key
+    # will need a registry update soon. Prices below are deepseek-v4-flash's
+    # (deepseek-chat's replacement) cache-miss/cache-hit input and output rates
+    # from api-docs.deepseek.com/quick_start/pricing.
+    price_per_1m_input: 0.14
+    price_per_1m_output: 0.28
+    price_per_1m_cached_input: 0.0028

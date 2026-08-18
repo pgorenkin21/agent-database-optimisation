@@ -1,0 +1,67 @@
+================================================================================================
+DeepSeek full-500 N=3 — WITHIN-ERA (all v4-flash), paired bootstrap 95% CI
+================================================================================================
+Comparison                  n   treat    ctrl           EX Δpp [95% CI]   v5 claimed (cross-era)
+P1 vs P0                  498    59.0    58.6        +0.4 [-1.6,+2.6] †   +1.2 †              
+prompt-cache vs P0        498    57.2    58.6        -1.4 [-3.6,+0.8] †   +0.8 †              
+P4 vs PC                  498    58.0    57.2        +0.8 [-1.8,+3.4] †   +6.0 [+2.6,+9.2]    
+P4 rep2 vs PC             498    58.0    57.2        +0.8 [-1.6,+3.2] †   +6.0 [+2.6,+9.6]    
+P1+P4 vs P1               498    58.2    59.0        -0.8 [-3.2,+1.6] †   +5.8 [+2.6,+9.0]    
+compose vs P0             498    58.2    58.6        -0.4 [-3.0,+2.2] †   +7.0 [+3.8,+10.4]   
+compose rep2 vs P0        498    58.6    58.6        +0.0 [-2.6,+2.4] †   +7.4 [+3.8,+11.0]   
+P3 stack vs P0            498    56.8    58.6        -1.8 [-4.6,+1.0] †   n/a                 
+P3 stack rep2 vs P0       497    58.8    58.8        +0.0 [-2.6,+2.6] †   +7.4 [+3.8,+11.1]   
+prune vs P0               498    58.6    58.6        +0.0 [-2.6,+2.4] †   +0.4 †              
+P3 stack vs P2 stack      498    56.8    57.0        -0.2 [-2.8,+2.2] †   +3.0 †              
+P3 rep2 vs P2 stack       497    58.8    57.1        +1.6 [-0.8,+4.0] †   +4.8 [+1.8,+8.0]    
+P2 stack vs P0            498    57.0    58.6        -1.6 [-4.4,+1.0] †   n/a                 
+
+================================================================================================
+Ledgers — WITHIN-ERA paired % change
+================================================================================================
+Comparison                metric    n                 Δ% [95% CI]
+P1 vs P0                  tokens  498         +15.9% [+6.1,+25.3]
+P1 vs P0                      db  498          -8.4% [-10.8,-5.9]
+prompt-cache vs P0        tokens  498        -2.2% [-10.8,+5.8] †
+prompt-cache vs P0            db  498         -1.0% [-3.2,+1.3] †
+P4 vs PC                  tokens  498         +10.6% [+2.5,+19.8]
+P4 vs PC                      db  498         -10.1% [-13.1,-7.0]
+P4 rep2 vs PC             tokens  498         +17.1% [+8.7,+27.2]
+P4 rep2 vs PC                 db  498         -10.0% [-12.7,-7.0]
+P1+P4 vs P1               tokens  498         +13.2% [+7.4,+19.1]
+P1+P4 vs P1                   db  498        -19.3% [-21.8,-16.9]
+compose vs P0             tokens  498        +3.1% [-6.6,+12.9] †
+compose vs P0                 db  498        -28.6% [-31.7,-25.4]
+compose rep2 vs P0        tokens  498        -2.4% [-11.4,+6.2] †
+compose rep2 vs P0            db  498        -24.4% [-27.5,-21.2]
+P3 stack vs P0            tokens  498        -8.5% [-18.1,+1.0] †
+P3 stack vs P0                db  498        -31.8% [-35.2,-28.3]
+P3 stack rep2 vs P0       tokens  497        -6.5% [-15.1,+3.4] †
+P3 stack rep2 vs P0           db  497        -31.4% [-34.7,-28.0]
+prune vs P0               tokens  498         -16.6% [-24.3,-9.3]
+prune vs P0                   db  498           +3.8% [+0.0,+7.8]
+P3 stack vs P2 stack      tokens  498        +1.8% [-5.7,+10.1] †
+P3 stack vs P2 stack          db  498         +0.3% [-3.9,+4.8] †
+P3 rep2 vs P2 stack       tokens  497        +4.2% [-5.8,+16.5] †
+P3 rep2 vs P2 stack           db  497         +0.8% [-3.3,+5.1] †
+P2 stack vs P0            tokens  498         -10.2% [-19.0,-1.0]
+P2 stack vs P0                db  498        -32.0% [-35.5,-28.3]
+
+================================================================================================
+Era coverage — every control used above must be a v4-flash batch
+================================================================================================
+  baseline_full500_r3_v4f                present   v4-flash
+  fullstack_prune_full500_r3_v4f         present   v4-flash
+  p1_full500_r3_v4f                      present   v4-flash
+  pc_full500_r3_v4f                      present   v4-flash
+
+  Superseded July/V3.2 controls (must NOT be used for DeepSeek deltas):
+    baseline_full500_r3                  on disk   -> use baseline_full500_r3_v4f
+    pc_full500_r3                        on disk   -> use pc_full500_r3_v4f
+    p1_full500_r3                        on disk   -> use p1_full500_r3_v4f
+    schema_prune_iso_full500_r3          on disk   -> use schema_prune_iso_full500_r3_v4f
+    fullstack_prune_full500_r3           on disk   -> use fullstack_prune_full500_r3_v4f
+
+  NOTE: p3_full500_r3* and compose/p4/p1p4 batches are Aug (v4-flash)
+  treatments, so they need no _v4f twin. generate_robustness_pack.py
+  still points DeepSeek at the July controls and is NOT corrected.

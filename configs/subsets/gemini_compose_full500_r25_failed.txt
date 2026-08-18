@@ -1,0 +1,33 @@
+# Auto-generated failed question_ids for Gemini repair
+# source: runs/batches/parallel_compose_full500_r25_gemini-2.5-flash_r25_best_of_n_p1_cache_promptcache_early_stop_schema_prune_p4suppress.json
+# count: 30
+944  # formula_1 challenging 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'The request timed out
+1002  # formula_1 moderate 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Stream cancelled; RPC
+598  # codebase_community challenging 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Stream cancelled; RPC
+346  # card_games moderate Query timed out after 30.0s
+95  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+98  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+99  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+100  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+112  # financial simple 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+115  # financial challenging 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+116  # financial challenging 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+117  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+118  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+125  # financial challenging 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+128  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+136  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+137  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+138  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+129  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+145  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+149  # financial challenging 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+152  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+159  # financial simple 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+168  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+169  # financial challenging 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+173  # financial challenging 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+186  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+189  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+192  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred
+194  # financial moderate 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment cred

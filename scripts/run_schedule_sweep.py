@@ -143,9 +143,12 @@ def main() -> int:
     parser.add_argument("--sweep-id", type=str, default="sched_r10")
     parser.add_argument(
         "--middleware",
-        nargs="+",
+        nargs="*",
         default=["--shared-cache", "--early-stop", "--schema-pruning", "--schema-pruning-mode", "hybrid"],
-        help="Flags passed to run_parallel_batch (default: P1+early stop+hybrid prune)",
+        help=(
+            "Flags passed to run_parallel_batch "
+            "(default: P1+early stop+hybrid prune; pass --middleware alone for none)"
+        ),
     )
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(

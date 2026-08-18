@@ -25,13 +25,24 @@ class RedundancyMetrics:
     total_explore_sql: int
     explore_redundancy_pct: float
     token_overhead_ratio: float | None
+    # Cached input tokens served from the provider prompt cache. 0 for
+    # baseline (non-cached) replicas that do not report a cached split.
+    total_cached_prompt_tokens: int = 0
 
-    def to_dict(self) -> dict[str, float | int]:
+    @property
+    def cached_prompt_pct(self) -> float:
+        if self.total_prompt_tokens <= 0:
+            return 0.0
+        return 100.0 * self.total_cached_prompt_tokens / self.total_prompt_tokens
+
+    def to_dict(self) -> dict[str, float | int | None]:
         return {
             "n_replicas": self.n_replicas,
             "replicas_ex_correct": self.replicas_ex_correct,
             "total_prompt_tokens": self.total_prompt_tokens,
             "total_completion_tokens": self.total_completion_tokens,
+            "total_cached_prompt_tokens": self.total_cached_prompt_tokens,
+            "cached_prompt_pct": round(self.cached_prompt_pct, 2),
             "min_replica_prompt_tokens": self.min_replica_prompt_tokens,
             "min_replica_completion_tokens": self.min_replica_completion_tokens,
             "duplicate_explore_sql": self.duplicate_explore_sql,
@@ -81,6 +92,9 @@ def compute_redundancy(replicas: list[AgentRunResult]) -> RedundancyMetrics:
 
     total_explore = len(explore_sql)
     explore_pct = 100.0 * duplicates / total_explore if total_explore else 0.0
+    # getattr keeps this compatible with both AgentRunResult (no cached split)
+    # and CachedAgentRunResult (prompt cache).
+    total_cached = sum(getattr(r, "total_cached_prompt_tokens", 0) for r in replicas)
     return RedundancyMetrics(
         n_replicas=n,
         replicas_ex_correct=sum(r.ex_correct for r in replicas),
@@ -92,6 +106,7 @@ def compute_redundancy(replicas: list[AgentRunResult]) -> RedundancyMetrics:
         total_explore_sql=total_explore,
         explore_redundancy_pct=explore_pct,
         token_overhead_ratio=overhead,
+        total_cached_prompt_tokens=total_cached,
     )
 
 

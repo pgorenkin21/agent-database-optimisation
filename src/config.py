@@ -136,6 +136,26 @@ class ProjectConfig:
         return float(self.raw.get("schema_pruning_semantic_min_score", 0.05))
 
     @property
+    def db_profile(self) -> bool:
+        return bool(self.raw.get("db_profile", False))
+
+    @property
+    def profiles_dir(self) -> Path:
+        return self.repo_root / self.raw.get("profiles_dir", "data/profiles")
+
+    @property
+    def db_profile_char_budget(self) -> int:
+        return int(self.raw.get("db_profile_char_budget", 1500))
+
+    @property
+    def explore_suppressor(self) -> bool:
+        return bool(self.raw.get("explore_suppressor", False))
+
+    @property
+    def explore_suppressor_max_suppressions(self) -> int:
+        return int(self.raw.get("explore_suppressor_max_suppressions", 64))
+
+    @property
     def semantic_store_config(self) -> dict[str, Any]:
         raw = self.raw.get("semantic_store", {})
         return raw if isinstance(raw, dict) else {}

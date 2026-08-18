@@ -1,0 +1,10 @@
+# Auto-generated failed question_ids for Gemini repair
+# source: runs/batches/parallel_p3_full500_r10_gemini-2.5-flash_r10_best_of_n_p1_cache_p3_semantic_early_stop_schema_prune.json
+# count: 7
+944  # formula_1 challenging 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Stream cancelled; RPC
+730  # superhero challenging 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'The request timed out
+765  # superhero simple 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'The request timed out
+825  # superhero moderate 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Stream cancelled; RPC
+465  # card_games moderate 504 DEADLINE_EXCEEDED. {'error': {'code': 504, 'message': 'Stream cancelled; RPC
+72  # california_schools moderate 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently exp
+98  # financial moderate 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently exp

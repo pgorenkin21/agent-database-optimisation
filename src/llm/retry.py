@@ -36,12 +36,39 @@ _RETRYABLE_EXCEPTION_NAMES = frozenset(
     }
 )
 
+# A 429 normally means "too fast, back off" and is worth retrying. A 429 that
+# names a billing ceiling means "this account is done until a human acts", and
+# retrying it can never succeed. On 17 Aug 2026 a Gemini run spent ~65 minutes
+# and 1,069 rejections retrying the latter, producing 27 task failures and
+# collapsing throughput from 7 to 1.9 tasks/min. These phrases make that class
+# of 429 fail immediately instead.
+_FATAL_PHRASES = (
+    "spending cap",
+    "spend cap",
+    "billing account",
+    "billing account has exceeded",
+)
+
+
+class QuotaExhausted(RuntimeError):
+    """A provider quota rejection that retrying cannot clear."""
+
+
+def is_fatal_quota_message(text: str) -> bool:
+    """True if a rejection names a billing ceiling rather than a rate limit."""
+    upper = text.upper()
+    return any(phrase.upper() in upper for phrase in _FATAL_PHRASES)
+
 
 @dataclass(frozen=True)
 class RetryConfig:
     max_attempts: int = 6
     base_delay_seconds: float = 2.0
     max_delay_seconds: float = 60.0
+    # Ceiling on time spent retrying ONE request. Without it, 6 attempts at
+    # 2s base and a 60s cap can burn ~2 minutes on a single call; with 10
+    # replicas per task that is what stalled the 17 Aug run.
+    max_total_seconds: float = 90.0
 
 
 def _status_from_exception(exc: BaseException) -> int | None:
@@ -70,6 +97,13 @@ def is_retryable_message(text: str) -> bool:
 def is_retryable_error(exc: BaseException) -> bool:
     """True for transient provider errors worth backing off and retrying."""
     name = type(exc).__name__
+
+    # Checked before anything else: a billing-ceiling rejection also carries a
+    # 429 and the word "quota", so every other rule below would call it
+    # retryable.
+    if is_fatal_quota_message(str(exc)):
+        return False
+
     if name in _RETRYABLE_EXCEPTION_NAMES:
         return True
 
@@ -103,16 +137,29 @@ def call_with_retry(
     *,
     on_retry: Callable[[int, BaseException, float], None] | None = None,
 ) -> T:
-    """Call fn(); retry on transient errors until max_attempts is exhausted."""
+    """Call fn(); retry transient errors until attempts or the time budget run out.
+
+    Stops early on a billing-ceiling rejection (see QuotaExhausted) and once
+    max_total_seconds of wall clock has been spent on this one request, so a
+    single call cannot stall a batch indefinitely.
+    """
     last_exc: BaseException | None = None
+    started = time.monotonic()
     for attempt in range(config.max_attempts):
         try:
             return fn()
         except Exception as exc:
             last_exc = exc
+            if is_fatal_quota_message(str(exc)):
+                raise QuotaExhausted(
+                    f"provider quota rejection is not retryable: {exc}"
+                ) from exc
             if attempt >= config.max_attempts - 1 or not is_retryable_error(exc):
                 raise
             wait = retry_delay_seconds(attempt, config)
+            elapsed = time.monotonic() - started
+            if elapsed + wait > config.max_total_seconds:
+                raise
             if on_retry:
                 on_retry(attempt + 1, exc, wait)
             time.sleep(wait)

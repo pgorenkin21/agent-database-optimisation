@@ -1,0 +1,112 @@
+{
+  "comparisons": [
+    {
+      "p0": {
+        "path": "/workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_gpt_baseline_redo_jun13tier2v2_baseline_r25_gpt-4o-mini_r25_best_of_n.json",
+        "batch_id": "gpt_baseline_redo_jun13tier2v2_baseline_r25",
+        "model_key": "gpt-4o-mini",
+        "policy": "best_of_n",
+        "n_replicas": 25,
+        "early_stop": false,
+        "task_count": 50,
+        "ex_accuracy_pct": 62.0,
+        "avg_explore_redundancy_pct": 87.73,
+        "avg_token_overhead_ratio": 27.142,
+        "total_tokens": 6322822,
+        "early_stop_triggered_count": 0,
+        "avg_replicas_cancelled": 0.0,
+        "avg_tokens_per_task_triggered": null,
+        "avg_tokens_per_task_not_triggered": 126456
+      },
+      "early_stop": {
+        "path": "/workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_earlystop_r25_bo_gpt-4o-mini_r25_best_of_n_early_stop.json",
+        "batch_id": "earlystop_r25_bo",
+        "model_key": "gpt-4o-mini",
+        "policy": "best_of_n",
+        "n_replicas": 25,
+        "early_stop": true,
+        "task_count": 50,
+        "ex_accuracy_pct": 62.0,
+        "avg_explore_redundancy_pct": 87.87,
+        "avg_token_overhead_ratio": 23.786,
+        "total_tokens": 5800147,
+        "early_stop_triggered_count": 31,
+        "avg_replicas_cancelled": 13.7,
+        "avg_tokens_per_task_triggered": 86910,
+        "avg_tokens_per_task_not_triggered": 163470
+      }
+    },
+    {
+      "p0": {
+        "path": "/workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_20260611_123711_91299c_baseline_r25_gemini-2.5-flash_r25_best_of_n.json",
+        "batch_id": "20260611_123711_91299c_baseline_r25",
+        "model_key": "gemini-2.5-flash",
+        "policy": "best_of_n",
+        "n_replicas": 25,
+        "early_stop": false,
+        "task_count": 50,
+        "ex_accuracy_pct": 70.0,
+        "avg_explore_redundancy_pct": 76.6,
+        "avg_token_overhead_ratio": 24.457,
+        "total_tokens": 3685459,
+        "early_stop_triggered_count": 0,
+        "avg_replicas_cancelled": 0.0,
+        "avg_tokens_per_task_triggered": null,
+        "avg_tokens_per_task_not_triggered": 73709
+      },
+      "early_stop": {
+        "path": "/workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_earlystop_r25_bo_gemini-2.5-flash_r25_best_of_n_early_stop.json",
+        "batch_id": "earlystop_r25_bo",
+        "model_key": "gemini-2.5-flash",
+        "policy": "best_of_n",
+        "n_replicas": 25,
+        "early_stop": true,
+        "task_count": 50,
+        "ex_accuracy_pct": 64.0,
+        "avg_explore_redundancy_pct": 69.85,
+        "avg_token_overhead_ratio": 18.773,
+        "total_tokens": 3251203,
+        "early_stop_triggered_count": 32,
+        "avg_replicas_cancelled": 14.76,
+        "avg_tokens_per_task_triggered": 73293,
+        "avg_tokens_per_task_not_triggered": 50324
+      }
+    },
+    {
+      "p0": {
+        "path": "/workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_20260611_123747_60b677_baseline_r25_deepseek-v3.2_r25_best_of_n.json",
+        "batch_id": "20260611_123747_60b677_baseline_r25",
+        "model_key": "deepseek-v3.2",
+        "policy": "best_of_n",
+        "n_replicas": 25,
+        "early_stop": false,
+        "task_count": 50,
+        "ex_accuracy_pct": 64.0,
+        "avg_explore_redundancy_pct": 82.89,
+        "avg_token_overhead_ratio": 32.661,
+        "total_tokens": 18889223,
+        "early_stop_triggered_count": 0,
+        "avg_replicas_cancelled": 0.0,
+        "avg_tokens_per_task_triggered": null,
+        "avg_tokens_per_task_not_triggered": 377784
+      },
+      "early_stop": {
+        "path": "/workspaces/Cursor Agent Database Optimisation/runs/batches/parallel_earlystop_r25_bo_deepseek-v3.2_r25_best_of_n_early_stop.json",
+        "batch_id": "earlystop_r25_bo",
+        "model_key": "deepseek-v3.2",
+        "policy": "best_of_n",
+        "n_replicas": 25,
+        "early_stop": true,
+        "task_count": 50,
+        "ex_accuracy_pct": 58.0,
+        "avg_explore_redundancy_pct": 85.43,
+        "avg_token_overhead_ratio": 25.887,
+        "total_tokens": 16633789,
+        "early_stop_triggered_count": 29,
+        "avg_replicas_cancelled": 13.8,
+        "avg_tokens_per_task_triggered": 246965,
+        "avg_tokens_per_task_not_triggered": 451038
+      }
+    }
+  ]
+}
