@@ -113,16 +113,3 @@ Every quantitative claim follows the same path: **paper → `v8_numbers.txt` →
 
 Identifiers follow `v8_[arm]_[scale]_r[N]`, where scale is `50t` or `500t` and N is 3, 10 or 25 at 50 tasks and 3 or 10 at 500.
 
----
-
-## Honest notes on what is and is not here
-
-- **Per-replica JSONL traces are not included for the historical runs.** The batch summaries carry every number the paper reports, and those are complete. The raw traces behind them are not in this submission. The demo run above regenerates traces so the format can be inspected, and `runs/traces_demo/` in the submission zip holds one worked example.
-- **No second seed exists for any cell in the final design.** Replication is the paper's main stated limitation, in §7.
-- **DeepSeek changed model version mid-project.** On 2026-07-24 the endpoint was folded into its successor. Every DeepSeek result in the paper is re-run on the current version; `runs/reports/within_era_deepseek_v5.txt` records the comparison that established the problem.
-- **Costs are list-price estimates**, not invoices, and cached-token counts are provider-reported.
-- **Two coordination policies named in the registered project definition were cut** and are not evaluated in the paper. Their implementation survives in `src/` because the runner still accepts their flags, but no reported result uses them. §7 declares the narrowing and the reflective essay explains why.
-
-## Generative AI
-
-Generative AI tools were used under my direction for implementation assistance, and for editorial drafting of the paper from experiment reports. All quantitative content is computed by deterministic scripts from execution traces; no figure or table value is model-generated. All design decisions, result interpretation and final text were reviewed and approved by me. The paper's appendix carries the full statement.
