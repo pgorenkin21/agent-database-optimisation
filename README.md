@@ -70,7 +70,7 @@ That writes `data/bird/mini_dev/`, the path `configs/default.yaml` expects. **Ev
 
 ### Why there is no executable
 
-The project is a set of experiments against commercial LLM APIs, not an application, so there is nothing meaningful to package as a binary. The two things an examiner is most likely to want are single commands.
+The project is a set of experiments against commercial LLM APIs, not an application, so there is nothing meaningful to package as a binary.
 
 **Reproduce a run end to end** (needs the dataset and an OpenAI key, costs a few cents):
 
